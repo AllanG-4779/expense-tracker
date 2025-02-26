@@ -28,7 +28,7 @@ func main() {
 	// REGISTER ROUTES
 	routes.UserRoutesSetup(r)
 
-	err := r.Run(":9095")
+	err := r.Run(":9097")
 	if err != nil {
 		log.Fatal("Failed to start 	HTTP SERVER")
 	}

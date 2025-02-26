@@ -9,7 +9,7 @@ import (
 func UserRoutesSetup(engine *gin.Engine){
 	matcher := engine.Group(constants.API_ENTRY_POINT_USERS)
 	{
-		matcher.GET(constants.API_REGISTER,  handlers.LoginUser)
+		matcher.POST(constants.API_REGISTER,  handlers.RegisterUser)
 	}
 
 
