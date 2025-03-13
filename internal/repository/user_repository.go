@@ -7,7 +7,7 @@ import (
 	"github.com/allang-4779/financer/internal/database"
 	"github.com/allang-4779/financer/internal/models"
 	"github.com/allang-4779/financer/internal/types"
-	"github.com/allang-4779/financer/internal/util"
+	
 )
 
 /**
@@ -51,7 +51,7 @@ func CreateLoginAccount(email string, password string) error {
 	user, err := GetUserByEmail(email)
 	loginAccount := models.LoginAccount{
 		Username:   email,
-		Password:   util.EncryptPassword(password),
+		Password:   password,
 		FirstLogin: true,
 		LastLogin:  time.Now(),
 	}
@@ -61,4 +61,14 @@ func CreateLoginAccount(email string, password string) error {
 	loginAccount.UserID = user.ID
 	log.Println("User ID: ")
 	return database.DB.Create(&loginAccount).Error
+}
+
+func GetLoginAccountByEmail(email string) (error, models.LoginAccount) {
+	var loginAccount models.LoginAccount
+	err := database.DB.Where("username = ?", email).First(&loginAccount)
+	if (err!=nil){
+		return err.Error, loginAccount		
+	}
+	return nil, loginAccount
+
 }

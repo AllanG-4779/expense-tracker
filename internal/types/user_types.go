@@ -2,7 +2,7 @@ package types
 
 type LoginResponse struct {
 	Message    string `json:"message"`
-	Token      string `json:"token"`
+	Token      TokenResponse `json:"body"`
 	Status     int    `json:"status"`
 	Successful bool   `json:"successful"`
 }
@@ -20,4 +20,14 @@ type UserRegistration struct {
 type UserLogin struct {
 	Username string `json:"username"`
 	Password string `json:"password"`
+}
+
+type LoginRequest struct {
+	Username string `json:"username"`
+	Password string `json:"password"`
+}
+
+type TokenResponse struct {
+	Token string `json:"token"`
+	ValidFor int `json:"valid_for"`
 }

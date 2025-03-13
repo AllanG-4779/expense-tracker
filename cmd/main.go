@@ -6,7 +6,9 @@ import (
 
 	"github.com/allang-4779/financer/internal/configuration"
 	"github.com/allang-4779/financer/internal/database"
+	
 	"github.com/allang-4779/financer/internal/routes"
+	"github.com/allang-4779/financer/internal/util"
 	"github.com/gin-gonic/gin"
 )
 
@@ -15,6 +17,8 @@ func main() {
 
 	cfg := configuration.InitializeConfiguration();
 	database.InitDB(cfg)	
+	// LOAD RSA KEYS
+	util.LoadKeys("private.pem", "public.pem")
 
 	end := time.Now()
 
@@ -24,6 +28,8 @@ func main() {
 	// Setup GIN server
 
 	r := gin.Default();
+
+	
 
 	// REGISTER ROUTES
 	routes.UserRoutesSetup(r)
