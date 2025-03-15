@@ -14,7 +14,8 @@ type UserRegistration struct {
 	Dob         string `json:"dob"`
 	Residential string `json:"residential"`
 	Phone       string `json:"phone"`
-	Password    string `json:"password"`
+	// ignore this
+	Password   string `json:"password"`
 }
 
 type UserLogin struct {
@@ -30,4 +31,11 @@ type LoginRequest struct {
 type TokenResponse struct {
 	Token string `json:"token"`
 	ValidFor int `json:"valid_for"`
+}
+
+type AuthContext struct {
+	Email string `json:"email"`
+	Sub  string `json:"sub"`
+	Iat  string `json:"iat"`
+	Iss  string `json:"iss"`
 }

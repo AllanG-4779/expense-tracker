@@ -9,7 +9,7 @@ const (
 	API_LOGIN                    = "/login"
 	API_REGISTER                 = "/register"
 	API_LOOKUP				   = "/lookup"
-	API_GET_USER                 = "/user"
+	API_GET_USER                 = "/me"
 	
 	
 )

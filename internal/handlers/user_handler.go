@@ -3,9 +3,11 @@ package handlers
 import (
 	"log"
 
+	"github.com/allang-4779/financer/internal/constants"
 	"github.com/allang-4779/financer/internal/service"
 	"github.com/allang-4779/financer/internal/types"
 	"github.com/gin-gonic/gin"
+	"github.com/golang-jwt/jwt/v5"
 )
 
 func RegisterUser(context *gin.Context) {
@@ -14,14 +16,13 @@ func RegisterUser(context *gin.Context) {
 	if err := context.ShouldBindJSON(&user); err != nil {
 		context.JSON(400, gin.H{"error": err.Error()})
 		return
-	}else if err := service.RegisterUser(&user); err != nil {
+	} else if err := service.RegisterUser(&user); err != nil {
 		context.JSON(400, gin.H{"error": "Could not register user"})
-		return;
+		return
 	}
 	context.JSON(201, gin.H{"message": "User registered successfully"})
-	
-}
 
+}
 
 func LoginUser(context *gin.Context) {
 	var user types.LoginRequest
@@ -31,25 +32,26 @@ func LoginUser(context *gin.Context) {
 		return
 	}
 	token, err := service.LoginUser(user.Username, user.Password)
-	if (err != nil){
+	if err != nil {
 		log.Println(err)
 		context.JSON(400, gin.H{"error": err.Error()})
 		return
 	}
 
 	context.JSON(201, token)
-	
+
 }
 
 func GetUser(context *gin.Context) {
-	params := context.Params;
-	log.Println(params)
-	gmail := params.ByName("email")
-	log.Println(gmail)
-	user, err := service.GetUser(gmail)
-	if (err != nil){
+	auth := context.MustGet("claims").(jwt.MapClaims)
+
+	currentUser := auth["sub"].(string)
+	// return
+	user, err := service.GetUser(currentUser)
+	if err != nil {
 		context.JSON(400, gin.H{"error": err.Error()})
+		return
 	}
-	context.JSON(200, gin.H{"message": "User retrieved successfully", "user": user})
+	context.JSON(200, gin.H{"message": constants.SUCCESSUL_REQUEST, "user": user})
 
 }

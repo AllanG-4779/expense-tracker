@@ -17,7 +17,7 @@ func GenerateAccessToken(payload jwt.MapClaims, expirySeconds uint)(string, erro
 	payload["sub"] = payload["email"]
 	payload["aud"] = "financer"
 
-	token := jwt.NewWithClaims(jwt.SigningMethodPS256.SigningMethodRSA, payload)
+	token := jwt.NewWithClaims(jwt.SigningMethodRS256, payload)
 
 	tokenString, err := token.SignedString(util.GetPrivateKey())
 	if err != nil {
@@ -41,5 +41,6 @@ func VerifyToken(tokenString string) (jwt.MapClaims, error) {
 	if !token.Valid {
 		return nil, errors.New("token is invalid")
 	}
+
 	return token.Claims.(jwt.MapClaims), nil
 }
