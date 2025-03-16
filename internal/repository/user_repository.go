@@ -1,6 +1,7 @@
 package repository
 
 import (
+	"github.com/allang-4779/financer/internal/constants"
 	"github.com/allang-4779/financer/internal/database"
 	"github.com/allang-4779/financer/internal/models"
 	"github.com/allang-4779/financer/internal/types"
@@ -30,9 +31,17 @@ func CreateUser(user *types.UserRegistration) error {
 	return nil
 }
 
-func GetUserByEmail(email string) (*models.SystemUser, error) {
+func GetUser(email string, param string) (*models.SystemUser, error) {
 	var user models.SystemUser
-	err := database.DB.Get(&user, database.GetUserByEmail, email) // FIXED
+	var err error
+
+	switch param {
+	case constants.EMAIL:
+		err = database.DB.Get(&user, database.GetUserByEmail, email) // FIXED
+	case constants.USERNAME:
+		err = database.DB.Get(&user, database.LoginUsernameQuery, email) // FIXED
+	}
+
 	if err != nil {
 		log.Printf("Error fetching user: %v", err)
 		return nil, err
@@ -41,29 +50,26 @@ func GetUserByEmail(email string) (*models.SystemUser, error) {
 	return &user, nil
 }
 
-func CreateLoginAccount(email string, password string) error {
-	//	user, err := GetUserByEmail(email)
-	//	loginAccount := models.LoginAccount{
-	//		Username:   email,
-	//		Password:   password,
-	//		FirstLogin: true,
-	//		LastLogin:  time.Now(),
-	//	}
-	//	if err != nil {
-	//		return err
-	//	}
-	//	loginAccount.UserID =
-	//	log.Println("User ID: ")
-	//	return database.DB.Create(&loginAccount).Error
-	return nil
+func UpdateProfile(user *models.SystemUser) (models.SystemUser, error) {
+	_, err := database.DB.NamedExec(database.UpdateUserProfile, user)
+	if err != nil {
+		log.Printf("Error updating user: %v", err)
+		return models.SystemUser{}, err
+	}
+	data, errorReturned := GetUser(user.Email, constants.EMAIL)
+
+	return *data, errorReturned
 }
 
-func GetLoginAccountByEmail(email string) (error, models.LoginAccount) {
-	var loginAccount models.LoginAccount
-	//err := database.DB.Where("username = ?", email).First(&loginAccount)
-	//if (err!=nil){
-	//	return err.Error, loginAccount
-	//}
+func GetLoginAccount(email string) (error, models.SystemUser) {
+	var loginAccount models.SystemUser
+
+	err := database.DB.Get(&loginAccount, database.LoginUsernameQuery, email)
+	if err != nil {
+		log.Printf("Error fetching user: %v", err)
+		return err, loginAccount
+	}
+
 	return nil, loginAccount
 
 }

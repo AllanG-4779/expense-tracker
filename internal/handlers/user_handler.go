@@ -48,11 +48,29 @@ func GetUser(context *gin.Context) {
 
 	currentUser := auth["sub"].(string)
 	// return
-	user, err := service.GetUser(currentUser)
+	user, err := service.GetUser(currentUser, constants.USERNAME)
 	if err != nil {
 		context.JSON(400, gin.H{"error": err.Error()})
 		return
 	}
 	context.JSON(200, gin.H{"message": constants.SUCCESSUL_REQUEST, "user": user})
+
+}
+
+func UpdateUser(context *gin.Context) {
+	auth := context.MustGet("claims").(jwt.MapClaims)
+	currentUser := auth["sub"].(string)
+	var body types.UserRegistration
+	err := context.ShouldBindJSON(&body)
+	if err != nil {
+		context.JSON(400, gin.H{"error": err.Error()})
+		return
+	}
+	data, updateErr := service.UpdateProfile(&body, currentUser)
+	if updateErr != nil {
+		context.JSON(400, gin.H{"error": updateErr.Error()})
+		return
+	}
+	context.JSON(200, gin.H{"message": constants.SUCCESSUL_REQUEST, "data": data})
 
 }

@@ -9,12 +9,12 @@ import (
 	"github.com/golang-jwt/jwt/v5"
 )
 
-func GenerateAccessToken(payload jwt.MapClaims, expirySeconds uint)(string, error) {
-	log.Print("Generating token with payload", payload);
+func GenerateAccessToken(payload jwt.MapClaims, expirySeconds uint) (string, error) {
+	log.Print("Generating token with payload", payload)
 	payload["exp"] = time.Now().Add(time.Second * time.Duration(expirySeconds)).Unix()
 	payload["iat"] = time.Now().Unix()
 	payload["iss"] = "financer"
-	payload["sub"] = payload["email"]
+	payload["sub"] = payload["username"]
 	payload["aud"] = "financer"
 
 	token := jwt.NewWithClaims(jwt.SigningMethodRS256, payload)
@@ -25,8 +25,6 @@ func GenerateAccessToken(payload jwt.MapClaims, expirySeconds uint)(string, erro
 		return "", errors.New("could not generate access token")
 	}
 	return tokenString, nil
-
-
 
 }
 

@@ -8,15 +8,13 @@ type LoginResponse struct {
 }
 
 type UserRegistration struct {
-	FirstName   string `json:"first_name"`
-	LastName    string `json:"last_name"`
-	Email       string `json:"email"`
-	Dob         string `json:"dob"`
-	Residential string `json:"residential"`
-	Phone       string `json:"phone"`
-	Username    string `json:"username"`
+	FirstName string `json:"first_name"`
+	LastName  string `json:"last_name"`
+	Email     string `json:"email"`
+	Username  string `json:"username"`
 	// ignore this
-	Password string `json:"password"`
+	Password    string `json:"password,omitempty"`
+	NewPassword string `json:"new_password,omitempty"`
 }
 
 type UserLogin struct {
