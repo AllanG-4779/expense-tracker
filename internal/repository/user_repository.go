@@ -1,6 +1,7 @@
 package repository
 
 import (
+	"github.com/allang-4779/financer/internal/database"
 	"github.com/allang-4779/financer/internal/models"
 	"github.com/allang-4779/financer/internal/types"
 	"log"
@@ -13,33 +14,31 @@ import (
 func CreateUser(user *types.UserRegistration) error {
 
 	userEntity := models.SystemUser{
-		FirstName:   user.FirstName,
-		LastName:    user.LastName,
-		Email:       user.Email,
-		Dob:         user.Dob,
-		Residential: user.Residential,
-		Phone:       user.Phone,
+		FirstName: user.FirstName,
+		LastName:  user.LastName,
+		Email:     user.Email,
+		Username:  user.Username,
+		Password:  user.Password,
 	}
+
 	log.Print(userEntity)
-
-	//err:= database.DB.Create(&userEntity).Error
-	//if (err != nil){
-	//	return err
-	//}
-	//
-	//err = CreateLoginAccount(user.Email, user.Password)
-	//if (err != nil){
-	//	log.Print(err)
-	//	return err
-	//}
+	row, err := database.DB.NamedExec(database.CreateUser, userEntity)
+	if err != nil {
+		log.Panic(err)
+	}
+	log.Print(row)
 	return nil
-
 }
 
-func GetUserByEmail(email string) (models.SystemUser, error) {
+func GetUserByEmail(email string) (*models.SystemUser, error) {
 	var user models.SystemUser
-	//err := database.DB.Where("email = ?", email).First(&user).Error
-	return user, nil
+	err := database.DB.Get(&user, database.GetUserByEmail, email) // FIXED
+	if err != nil {
+		log.Printf("Error fetching user: %v", err)
+		return nil, err
+	}
+	log.Printf("User: %v", user)
+	return &user, nil
 }
 
 func CreateLoginAccount(email string, password string) error {

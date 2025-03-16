@@ -5,29 +5,25 @@ import (
 	"log"
 
 	"github.com/allang-4779/financer/internal/constants"
-	"github.com/allang-4779/financer/internal/models"
 	"github.com/allang-4779/financer/internal/repository"
 	"github.com/allang-4779/financer/internal/security"
 	"github.com/allang-4779/financer/internal/types"
 )
 
 func RegisterUser(user *types.UserRegistration) error {
-	var newUser models.SystemUser
 
-	newUser, err := repository.GetUserByEmail(user.Email)
-	if newUser.Email == user.Email {
-		return errors.New(constants.USER_ALREADY_EXISTS)
-	}
+	_, err := repository.GetUserByEmail(user.Email)
 	if err != nil {
 		pass, err := security.EncryptPassword(user.Password)
 		if err != nil {
 			return err
 		}
 		user.Password = pass
-
 		return repository.CreateUser(user)
 	}
-	return errors.New(constants.INTERNAL_SERVER_ERROR)
+
+	log.Println(err)
+	return errors.New(constants.USER_ALREADY_EXISTS)
 
 }
 
@@ -65,11 +61,9 @@ func GetUser(email string) (types.UserRegistration, error) {
 		return types.UserRegistration{}, errors.New("could not retrieve user")
 	}
 	return types.UserRegistration{
-		FirstName:   user.FirstName,
-		LastName:    user.LastName,
-		Email:       user.Email,
-		Dob:         user.Dob,
-		Residential: user.Residential,
-		Phone:       user.Phone,
+		FirstName: user.FirstName,
+		LastName:  user.LastName,
+		Email:     user.Email,
+		Username:  user.Username,
 	}, nil
 }

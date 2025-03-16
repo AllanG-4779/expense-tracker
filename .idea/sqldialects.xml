@@ -3,6 +3,6 @@
   <component name="SqlDialectMappings">
     <file url="file://$PROJECT_DIR$/db/migrations/000001_create_expenses_table.down.sql" dialect="PostgreSQL" />
     <file url="file://$PROJECT_DIR$/db/migrations/000001_create_expenses_table.up.sql" dialect="PostgreSQL" />
-    <file url="file://$PROJECT_DIR$/internal/database/queris.go" dialect="PostgreSQL" />
+    <file url="file://$PROJECT_DIR$/internal/database/queries.go" dialect="PostgreSQL" />
   </component>
 </project>

@@ -1,16 +1,16 @@
 package database
 
 import (
-	"database/sql"
 	"fmt"
 	"github.com/allang-4779/financer/internal/configuration"
 	"github.com/golang-migrate/migrate/v4"
 	"github.com/golang-migrate/migrate/v4/database/postgres"
 	_ "github.com/golang-migrate/migrate/v4/source/file"
+	"github.com/jmoiron/sqlx"
 	"log"
 )
 
-var DB *sql.DB
+var DB *sqlx.DB
 
 func InitDB(cfg *configuration.Configuration) {
 	dsn := fmt.Sprintf("host=%s user=%s port=%s password=%s dbname=%s sslmode=disable",
@@ -18,7 +18,7 @@ func InitDB(cfg *configuration.Configuration) {
 
 	var err error
 
-	DB, err = sql.Open("postgres", dsn)
+	DB, err = sqlx.Connect("postgres", dsn)
 
 	if err != nil {
 		log.Fatal("Could not initialize database connection")
@@ -27,18 +27,18 @@ func InitDB(cfg *configuration.Configuration) {
 }
 
 func MigrateDB() {
-	driver, err := postgres.WithInstance(DB, &postgres.Config{})
+	driver, err := postgres.WithInstance(DB.DB, &postgres.Config{})
 
 	if err != nil {
-		log.Fatal("Migration failed:", err)
+		log.Println("Migration failed:", err)
 	}
 	m, err := migrate.NewWithDatabaseInstance("file://db/migrations",
 		"postgres", driver)
 	if err != nil {
-		log.Fatal("Could not load migrations: ", err)
+		log.Println("Could not load migrations: ", err)
 	}
 	if err := m.Up(); err != nil {
-		log.Fatal("Migration failed: ", err)
+		log.Println("Migration failed: ", err)
 	}
 
 	log.Println("Database migrated successfully")

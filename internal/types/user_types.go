@@ -1,10 +1,10 @@
 package types
 
 type LoginResponse struct {
-	Message    string `json:"message"`
+	Message    string        `json:"message"`
 	Token      TokenResponse `json:"body"`
-	Status     int    `json:"status"`
-	Successful bool   `json:"successful"`
+	Status     int           `json:"status"`
+	Successful bool          `json:"successful"`
 }
 
 type UserRegistration struct {
@@ -14,8 +14,9 @@ type UserRegistration struct {
 	Dob         string `json:"dob"`
 	Residential string `json:"residential"`
 	Phone       string `json:"phone"`
+	Username    string `json:"username"`
 	// ignore this
-	Password   string `json:"password"`
+	Password string `json:"password"`
 }
 
 type UserLogin struct {
@@ -29,13 +30,13 @@ type LoginRequest struct {
 }
 
 type TokenResponse struct {
-	Token string `json:"token"`
-	ValidFor int `json:"valid_for"`
+	Token    string `json:"token"`
+	ValidFor int    `json:"valid_for"`
 }
 
 type AuthContext struct {
 	Email string `json:"email"`
-	Sub  string `json:"sub"`
-	Iat  string `json:"iat"`
-	Iss  string `json:"iss"`
+	Sub   string `json:"sub"`
+	Iat   string `json:"iat"`
+	Iss   string `json:"iss"`
 }

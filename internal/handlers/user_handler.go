@@ -17,7 +17,8 @@ func RegisterUser(context *gin.Context) {
 		context.JSON(400, gin.H{"error": err.Error()})
 		return
 	} else if err := service.RegisterUser(&user); err != nil {
-		context.JSON(400, gin.H{"error": "Could not register user"})
+		log.Println(err)
+		context.JSON(400, gin.H{"error": err.Error()})
 		return
 	}
 	context.JSON(201, gin.H{"message": "User registered successfully"})
