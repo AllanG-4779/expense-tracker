@@ -1,15 +1,15 @@
 package constants
 
+const (
+	ApiEntryPoint      = "/api/v1"
+	ApiEntryPointUsers = ApiEntryPoint + "/users"
+	ApiLogin           = "/login"
+	ApiRegister        = "/register"
+	ApiGetUser         = "/me"
+)
 
 const (
-	API_ENTRY_POINT             = "/api/v1"
-	API_ENTRY_POINT_USERS        = API_ENTRY_POINT + "/users"
-	API_ENTRY_POINT_TRANSACTIONS = "/transactions"
-	API_ENTRY_POINT_ACCOUNTS     = "/accounts"
-	API_LOGIN                    = "/login"
-	API_REGISTER                 = "/register"
-	API_LOOKUP				   = "/lookup"
-	API_GET_USER                 = "/me"
-	
-	
+	SetupEntryPoint       = ApiEntryPoint + "/setup"
+	SetupCategoryEndpoint = "/category"
+	SetupAccountEndpoint  = "/account"
 )

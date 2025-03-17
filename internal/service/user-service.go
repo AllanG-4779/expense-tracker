@@ -22,10 +22,10 @@ func RegisterUser(user *types.UserRegistration) error {
 	userName = err == nil
 
 	if emailExists {
-		return errors.New(constants.EMAIL_ALREADY_EXISTS)
+		return errors.New(constants.EmailAlreadyExists)
 	}
 	if userName {
-		return errors.New(constants.USERNAME_ALREADY_EXISTS)
+		return errors.New(constants.UsernameAlreadyExists)
 	}
 
 	pass, err := security.EncryptPassword(user.Password)
@@ -42,23 +42,23 @@ func LoginUser(username string, password string) (types.LoginResponse, error) {
 	err, user := repository.GetLoginAccount(username)
 	log.Println(user)
 	if err != nil {
-		return loginResponse, errors.New(constants.INVALID_CREDENTIALS)
+		return loginResponse, errors.New(constants.InvalidCredentialsMessage)
 	}
 	if !security.VerifyPassword(password, user.Password) {
 		log.Print("Password is incorrect")
-		return loginResponse, errors.New(constants.INVALID_CREDENTIALS)
+		return loginResponse, errors.New(constants.InvalidCredentialsMessage)
 	}
 	var payload = make(map[string]interface{})
 	payload["username"] = user.Username
 	response, err := security.GenerateAccessToken(payload, 3600)
 	if err != nil {
 		loginResponse.Status = 500
-		loginResponse.Message = constants.INTERNAL_SERVER_ERROR
+		loginResponse.Message = constants.InternalServerErrorMessage
 		return loginResponse, err
 	}
 
 	loginResponse.Token = types.TokenResponse{Token: response, ValidFor: 3600}
-	loginResponse.Message = constants.LOGIN_SUCCESS
+	loginResponse.Message = constants.LoginSuccessfulMessage
 	loginResponse.Status = 200
 	loginResponse.Successful = true
 	return loginResponse, nil
@@ -92,7 +92,7 @@ func UpdateProfile(user *types.UserRegistration, username string) (models.System
 		existingUser, err := repository.GetUser(user.Email, constants.EMAIL)
 
 		if err == nil && existingUser.Username != username {
-			return models.SystemUser{}, errors.New(constants.EMAIL_ALREADY_EXISTS)
+			return models.SystemUser{}, errors.New(constants.EmailAlreadyExists)
 		}
 		systemUser.Email = user.Email
 	}
@@ -100,13 +100,15 @@ func UpdateProfile(user *types.UserRegistration, username string) (models.System
 		systemUser.LastName = user.LastName
 	}
 	if user.NewPassword != "" {
-		if ok := security.VerifyPassword(systemUser.Password, user.Password); ok {
-			systemUser.Password, err = security.EncryptPassword(user.NewPassword)
-			if err != nil {
-				return models.SystemUser{}, err
+		if ok := security.VerifyPassword(user.Password, systemUser.Password); ok {
+			log.Println("password verification successful")
+			pass, verificationError := security.EncryptPassword(user.NewPassword)
+			if verificationError != nil {
+				return models.SystemUser{}, verificationError
 			}
+			systemUser.Password = pass
 		} else {
-			return models.SystemUser{}, errors.New(constants.INVALID_CREDENTIALS)
+			return models.SystemUser{}, errors.New(constants.PasswordVerificationErrorMessage)
 		}
 	}
 	return repository.UpdateProfile(systemUser)

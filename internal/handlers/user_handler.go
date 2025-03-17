@@ -53,7 +53,7 @@ func GetUser(context *gin.Context) {
 		context.JSON(400, gin.H{"error": err.Error()})
 		return
 	}
-	context.JSON(200, gin.H{"message": constants.SUCCESSUL_REQUEST, "user": user})
+	context.JSON(200, gin.H{"message": constants.SuccessfulRequestMessage, "user": user})
 
 }
 
@@ -71,6 +71,6 @@ func UpdateUser(context *gin.Context) {
 		context.JSON(400, gin.H{"error": updateErr.Error()})
 		return
 	}
-	context.JSON(200, gin.H{"message": constants.SUCCESSUL_REQUEST, "data": data})
+	context.JSON(200, gin.H{"message": constants.SuccessfulRequestMessage, "data": data})
 
 }

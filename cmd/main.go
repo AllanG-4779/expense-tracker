@@ -32,6 +32,7 @@ func main() {
 
 	// REGISTER ROUTES
 	routes.UserRoutesSetup(r)
+	routes.SetupRoutes(r)
 	defer func(DB *sqlx.DB) {
 		err := DB.Close()
 		if err != nil {
