@@ -18,7 +18,7 @@ type Transaction struct {
 	Date        string  `db:"date"`
 	Type        string  `db:"type"`
 	CategoryID  uint    `db:"category_id"`
-	UserID      uint    `db:"user_id"`
+	AccountID   uint    `db:"account_id"`
 	CreatedAt   string  `db:"created_at"`
 	UpdatedAt   string  `db:"updated_at"`
 	Deleted     bool    `db:"deleted"`

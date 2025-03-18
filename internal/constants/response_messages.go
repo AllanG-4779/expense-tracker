@@ -8,4 +8,6 @@ const (
 	EmailAlreadyExists               = "email already taken"
 	UsernameAlreadyExists            = "username already taken"
 	PasswordVerificationErrorMessage = "password verification failed"
+	DatabaseTransactionError         = "database lock error encountered"
+	InsufficientFunds                = "insufficient funds"
 )

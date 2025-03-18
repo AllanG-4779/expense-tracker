@@ -22,7 +22,6 @@ func CreateCategory(c *gin.Context) {
 }
 
 func GetCategories(c *gin.Context) {
-
 	var category types.CategoryRequest
 
 	if c.ShouldBindJSON(&category) == nil {
@@ -43,4 +42,36 @@ func GetCategories(c *gin.Context) {
 		return
 	}
 
+}
+
+func UpdateCategory(c *gin.Context) {
+	var category types.CategoryRequest
+	if c.ShouldBindJSON(&category) == nil {
+		category, err := service.UpdateCategory(&category)
+		if err != nil {
+			c.JSON(400, gin.H{"message": "Error updating category"})
+			return
+		}
+		c.JSON(200, gin.H{"message": "Category updated", "category": category})
+		return
+	} else {
+		c.JSON(400, gin.H{"message": "Error updating category"})
+		return
+	}
+}
+
+func DeleteCategory(c *gin.Context) {
+	var category types.CategoryRequest
+	if c.ShouldBindJSON(&category) == nil {
+		err := service.DeleteCategory(category)
+		if err != nil {
+			c.JSON(400, gin.H{"message": "Error deleting category"})
+			return
+		}
+		c.JSON(200, gin.H{"message": "Category deleted"})
+		return
+	} else {
+		c.JSON(400, gin.H{"message": "Error deleting category"})
+		return
+	}
 }

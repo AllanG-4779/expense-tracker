@@ -15,5 +15,6 @@ func UserRoutesSetup(engine *gin.Engine) {
 	matcher.POST(constants.ApiLogin, handlers.LoginUser)
 	authenticated.GET(constants.ApiGetUser, handlers.GetUser)
 	authenticated.PUT(constants.ApiGetUser, handlers.UpdateUser)
-
+	authenticated.POST(constants.ActivateAccount, handlers.ActivateAccount)
+	authenticated.POST(constants.AddTransaction, handlers.AddTransaction)
 }

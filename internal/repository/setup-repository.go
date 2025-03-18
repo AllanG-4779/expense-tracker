@@ -24,3 +24,21 @@ func GetCategories(request types.CategoryRequest) ([]types.CategoryRequest, erro
 
 	return categories, nil
 }
+func GetCategoryByName(name string) (*types.CategoryRequest, error) {
+	var category types.CategoryRequest
+	err := database.DB.Get(&category, database.GetCategory, name)
+	if err != nil {
+		log.Panic(err)
+	}
+	return &category, nil
+}
+func UpdateCategory(categoryData types.CategoryRequest) error {
+
+	_, err := database.DB.NamedExec(database.UpdateCategory, categoryData)
+	return err
+
+}
+func DeleteCategory(category types.CategoryRequest) error {
+	_, err := database.DB.NamedExec(database.DeleteCategory, category)
+	return err
+}

@@ -10,4 +10,6 @@ func SetupRoutes(engine *gin.Engine) {
 	setup := engine.Group(constants.SetupEntryPoint)
 	setup.POST(constants.SetupCategoryEndpoint, handlers.CreateCategory)
 	setup.GET(constants.SetupCategoryEndpoint, handlers.GetCategories)
+	setup.PUT(constants.SetupCategoryEndpoint, handlers.UpdateCategory)
+	setup.DELETE(constants.SetupCategoryEndpoint, handlers.DeleteCategory)
 }

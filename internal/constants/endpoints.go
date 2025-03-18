@@ -11,5 +11,9 @@ const (
 const (
 	SetupEntryPoint       = ApiEntryPoint + "/setup"
 	SetupCategoryEndpoint = "/category"
-	SetupAccountEndpoint  = "/account"
+)
+
+const (
+	ActivateAccount = "/activate"
+	AddTransaction  = "/add/transaction"
 )
