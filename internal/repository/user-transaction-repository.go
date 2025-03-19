@@ -6,38 +6,42 @@ import (
 	"github.com/allang-4779/financer/internal/database"
 	"github.com/allang-4779/financer/internal/models"
 	"github.com/allang-4779/financer/internal/types"
+	"gorm.io/gorm"
+	"strings"
 )
 
 func CreateTransactionAccount(request models.Account) error {
-	_, err := database.DB.NamedExec(database.CreateAccount, request)
+	err := database.DB.Create(&request)
 	if err != nil {
-		return err
+		return err.Error
 	}
 	return nil
 }
 
-func UpdateTransactionAccount(request types.AccountRequest) error {
-	_, err := database.DB.NamedExec(database.UpdateAccount, request)
+func UpdateTransactionAccount(request models.Account) error {
+
+	err := database.DB.Updates(request)
 	if err != nil {
-		return err
+		return err.Error
 	}
 	return nil
 }
 
 func GetUserAccount(id uint) (*models.Account, error) {
 	var account models.Account
-	err := database.DB.Get(&account, database.GetAccount, id)
+	err := database.DB.Find(&account, id).Error
 	if err != nil {
 		return nil, err
 	}
 	return &account, nil
 }
 
-func GetTransactionAccounts(request types.AccountRequest) ([]types.AccountRequest, error) {
-	var accounts []types.AccountRequest
+func GetTransactionAccounts(request types.AccountRequest) ([]models.Transaction, error) {
+	var accounts []models.Transaction
 	size := request.Size
 	offset := request.Size * (request.Page)
-	err := database.DB.Select(&accounts, database.GetAccounts, request.UserId, size, offset)
+
+	err := database.DB.Limit(size).Offset(offset).Find(&accounts).Error
 	if err != nil {
 		return nil, err
 	}
@@ -45,33 +49,29 @@ func GetTransactionAccounts(request types.AccountRequest) ([]types.AccountReques
 }
 
 func AddTransaction(request models.Transaction) error {
-	tr, err := database.DB.Beginx()
-	if err != nil {
-		return errors.New(constants.DatabaseTransactionError)
-	}
-	var account models.Account
-	err = tr.Get(&account, database.GetAccount, request.AccountID)
-	if err != nil {
-		rError := tr.Rollback()
-		if rError != nil {
-			return errors.New(constants.DatabaseTransactionError)
+
+	return database.DB.Transaction(func(tx *gorm.DB) error {
+		var account models.Account
+		err := database.DB.Find(&account, request.AccountID)
+		if err != nil {
+			return err.Error
 		}
-	}
-	if account.Balance < request.Amount {
-		rError := tr.Rollback()
-		if rError != nil {
-			return errors.New(constants.DatabaseTransactionError)
+		if strings.ToLower(request.Type) == constants.EXPENSE {
+			if account.Balance < request.Amount {
+				return errors.New(constants.InsufficientFunds)
+			}
+			account.Balance -= request.Amount
+		} else if strings.ToLower(request.Type) == constants.INCOME {
+			account.Balance += request.Amount
+
+		} else {
+			return errors.New("expense type undefined")
 		}
-		return errors.New(constants.InsufficientFunds)
-	}
-	_, err = tr.NamedExec(database.InsertTransaction, request)
-	if err != nil {
-		rError := tr.Rollback()
-		if rError != nil {
-			return errors.New(constants.DatabaseTransactionError)
+		result := database.DB.Save(&account)
+		if result.Error != nil {
+			return result.Error
 		}
-	}
-	account.Balance -= request.Amount
-	_, err = tr.NamedExec(database.UpdateAccount, account)
-	return err
+		result = database.DB.Create(&request)
+		return nil
+	})
 }

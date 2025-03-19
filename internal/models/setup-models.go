@@ -1,49 +1,37 @@
 package models
 
-type Category struct {
-	ID          uint   `db:"id"`
-	Name        string `db:"name"`
-	Icon        string `db:"icon"`
-	Type        string `db:"type"`
-	Description string `db:"description"`
-	CreatedAt   string `db:"created_at"`
-	UpdatedAt   string `db:"updated_at"`
-	Deleted     bool   `db:"deleted"`
-}
+import "gorm.io/gorm"
 
-type Transaction struct {
-	ID          uint    `db:"id"`
-	Amount      float64 `db:"amount"`
-	Description string  `db:"description"`
-	Date        string  `db:"date"`
-	Type        string  `db:"type"`
-	CategoryID  uint    `db:"category_id"`
-	AccountID   uint    `db:"account_id"`
-	CreatedAt   string  `db:"created_at"`
-	UpdatedAt   string  `db:"updated_at"`
-	Deleted     bool    `db:"deleted"`
+type Category struct {
+	gorm.Model
+	Name         string        `gorm:"size:255;not null;unique"`
+	Icon         string        `gorm:"type:text;not null"`
+	Type         string        `gorm:"type:text;not null"`
+	Description  string        `gorm:"type:text;not null"`
+	Transactions []Transaction `gorm:"foreignkey:CategoryID"`
+	Budget       []Budget      `gorm:"foreignkey:CategoryID"`
 }
 type Account struct {
-	ID        uint    `db:"id"`
-	UserID    uint    `db:"user_id"`
-	Name      string  `db:"name"`
-	Balance   float64 `db:"balance"`
-	CreatedAt string  `db:"created_at"`
-	UpdatedAt string  `db:"updated_at"`
-	Deleted   bool    `db:"deleted"`
+	gorm.Model
+	UserID  uint `gorm:"uniqueIndex"`
+	Name    string
+	Balance float64
+}
+type Transaction struct {
+	gorm.Model
+	Amount      float64 `gorm:"type:decimal(10,2);not null"`
+	Description string  `gorm:"type:text"`
+	Date        string  `gorm:"type:date;not null"`
+	Type        string  `gorm:"check:type in ('expense','income')"` //check ( type in ('expense', 'income') ),
+	CategoryID  uint    `gorm:"not null"`
+	AccountID   uint    `grom:"account_id"`
 }
 
 type Budget struct {
-	ID         uint    `db:"id"`
-	Amount     float64 `db:"amount"`
-	Balance    float64 `db:"balance"`
-	CategoryID uint    `db:"category_id"`
-	UserID     uint    `db:"user_id"`
-	StartDate  string  `db:"start_date"`
-	EndDate    string  `db:"end_date"`
-	CreatedAt  string  `db:"created_at"`
-	UpdatedAt  string  `db:"updated_at"`
-	Page       int     `db:"page"`
-	Size       int     `db:"size"`
-	Deleted    bool    `db:"deleted"`
+	gorm.Model
+	Amount     float64 `gorm:"not null"`
+	Balance    float64 `gorm:"not null;default 0.0"`
+	CategoryID uint    `gorm:"not null"`
+	UserID     uint    `gorm:"not null"`
+	StartDate  string  `gorm:"start_date"`
 }

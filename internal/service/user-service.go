@@ -18,8 +18,8 @@ func RegisterUser(user *types.UserRegistration) error {
 	_, err := repository.GetUser(user.Email, constants.EMAIL)
 	emailExists = err == nil
 
-	_, err = repository.GetUser(user.Username, constants.USERNAME)
-	userName = err == nil
+	_, errUsername := repository.GetUser(user.Username, constants.USERNAME)
+	userName = errUsername == nil
 
 	if emailExists {
 		return errors.New(constants.EmailAlreadyExists)

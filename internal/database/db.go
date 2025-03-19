@@ -3,14 +3,13 @@ package database
 import (
 	"fmt"
 	"github.com/allang-4779/financer/internal/configuration"
-	"github.com/golang-migrate/migrate/v4"
-	"github.com/golang-migrate/migrate/v4/database/postgres"
-	_ "github.com/golang-migrate/migrate/v4/source/file"
-	"github.com/jmoiron/sqlx"
+	"github.com/allang-4779/financer/internal/models"
+	"gorm.io/driver/postgres"
+	"gorm.io/gorm"
 	"log"
 )
 
-var DB *sqlx.DB
+var DB *gorm.DB
 
 func InitDB(cfg *configuration.Configuration) {
 	dsn := fmt.Sprintf("host=%s user=%s port=%s password=%s dbname=%s sslmode=disable",
@@ -18,7 +17,7 @@ func InitDB(cfg *configuration.Configuration) {
 
 	var err error
 
-	DB, err = sqlx.Connect("postgres", dsn)
+	DB, err = gorm.Open(postgres.Open(dsn), &gorm.Config{})
 
 	if err != nil {
 		log.Fatal("Could not initialize database connection")
@@ -27,18 +26,10 @@ func InitDB(cfg *configuration.Configuration) {
 }
 
 func MigrateDB() {
-	driver, err := postgres.WithInstance(DB.DB, &postgres.Config{})
-
+	err := DB.AutoMigrate(models.SystemUser{},
+		models.Account{}, models.Category{}, models.Transaction{}, models.Budget{})
 	if err != nil {
 		log.Println("Migration failed:", err)
-	}
-	m, err := migrate.NewWithDatabaseInstance("file://db/migrations",
-		"postgres", driver)
-	if err != nil {
-		log.Println("Could not load migrations: ", err)
-	}
-	if err := m.Up(); err != nil {
-		log.Println("Migration failed: ", err)
 	}
 
 	log.Println("Database migrated successfully")

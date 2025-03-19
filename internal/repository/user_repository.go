@@ -5,6 +5,7 @@ import (
 	"github.com/allang-4779/financer/internal/database"
 	"github.com/allang-4779/financer/internal/models"
 	"github.com/allang-4779/financer/internal/types"
+	"gorm.io/gorm"
 	"log"
 )
 
@@ -23,51 +24,54 @@ func CreateUser(user *types.UserRegistration) error {
 	}
 
 	log.Print(userEntity)
-	row, err := database.DB.NamedExec(database.CreateUser, userEntity)
+	err := database.DB.Create(&userEntity)
 	if err != nil {
-		log.Panic(err)
+		return err.Error
 	}
-	log.Print(row)
+	log.Print("User created successfully")
 	return nil
 }
 
 func GetUser(email string, param string) (*models.SystemUser, error) {
 	var user models.SystemUser
-	var err error
+	var err *gorm.DB
 
 	switch param {
 	case constants.EMAIL:
-		err = database.DB.Get(&user, database.GetUserByEmail, email) // FIXED
+		err = database.DB.First(&user, models.SystemUser{Email: email}) // FIXED
 	case constants.USERNAME:
-		err = database.DB.Get(&user, database.LoginUsernameQuery, email) // FIXED
+		err = database.DB.First(&user, models.SystemUser{Username: email}) // FIXED
 	}
 
-	if err != nil {
+	if err != nil && err.Error != nil {
 		log.Printf("Error fetching user: %v", err)
-		return nil, err
+		return nil, err.Error
 	}
 	log.Printf("User: %v", user)
 	return &user, nil
 }
 
 func UpdateProfile(user *models.SystemUser) (models.SystemUser, error) {
-	_, err := database.DB.NamedExec(database.UpdateUserProfile, user)
+	err := database.DB.Create(&user)
 	if err != nil {
 		log.Printf("Error updating user: %v", err)
-		return models.SystemUser{}, err
+		return models.SystemUser{}, err.Error
 	}
 	data, errorReturned := GetUser(user.Email, constants.EMAIL)
-
-	return *data, errorReturned
+	if data != nil {
+		log.Printf("User updated successfully")
+		return *data, errorReturned
+	}
+	return models.SystemUser{}, nil
 }
 
 func GetLoginAccount(email string) (error, models.SystemUser) {
 	var loginAccount models.SystemUser
 
-	err := database.DB.Get(&loginAccount, database.LoginUsernameQuery, email)
+	err := database.DB.First(&loginAccount, models.SystemUser{Username: email})
 	if err != nil {
 		log.Printf("Error fetching user: %v", err)
-		return err, loginAccount
+		return err.Error, loginAccount
 	}
 
 	return nil, loginAccount

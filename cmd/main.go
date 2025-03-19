@@ -1,7 +1,6 @@
 package main
 
 import (
-	"github.com/jmoiron/sqlx"
 	"log"
 	"time"
 
@@ -33,12 +32,6 @@ func main() {
 	// REGISTER ROUTES
 	routes.UserRoutesSetup(r)
 	routes.SetupRoutes(r)
-	defer func(DB *sqlx.DB) {
-		err := DB.Close()
-		if err != nil {
-			log.Fatal("Failed to close database connection")
-		}
-	}(database.DB)
 
 	err := r.Run(":9097")
 	if err != nil {
