@@ -11,7 +11,11 @@ func CreateCategory(c *gin.Context) {
 
 	var category types.CategoryRequest
 	if c.ShouldBind(&category) == nil {
-		service.CreateCategory(&category)
+		err := service.CreateCategory(&category)
+		if err != nil {
+			c.JSON(400, gin.H{"message": err.Error()})
+			return
+		}
 		c.JSON(200, gin.H{"message": "Category created"})
 		return
 	} else {

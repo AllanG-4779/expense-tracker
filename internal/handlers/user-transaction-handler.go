@@ -34,14 +34,33 @@ func AddTransaction(context *gin.Context) {
 	var transaction types.TransactionRequest
 	if context.ShouldBindJSON(&transaction) == nil {
 		err := service.AddTransaction(transaction, username)
+		log.Print(err)
 		if err != nil {
-			context.JSON(400, gin.H{"message": "Error adding transaction"})
+			context.JSON(400, gin.H{"message": "Error adding transaction: " + err.Error()})
 			return
 		}
 		context.JSON(200, gin.H{"message": "Transaction added"})
 		return
 	} else {
 		context.JSON(400, gin.H{"message": "Error adding transaction"})
+		return
+	}
+}
+
+func CreateBudget(context *gin.Context) {
+	authCtx := context.MustGet(constants.CLAIMS).(jwt.MapClaims)
+	username := authCtx["username"].(string)
+	var budget types.BudgetRequest
+	if context.ShouldBindJSON(&budget) == nil {
+		err := service.CreateBudget(budget, username)
+		if err != nil {
+			context.JSON(400, gin.H{"message": "Error creating budget"})
+			return
+		}
+		context.JSON(200, gin.H{"message": "Budget created"})
+		return
+	} else {
+		context.JSON(400, gin.H{"message": "Error creating budget"})
 		return
 	}
 }

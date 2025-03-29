@@ -7,8 +7,18 @@ import (
 	"github.com/allang-4779/financer/internal/types"
 )
 
-func CreateCategory(category *types.CategoryRequest) {
-	repository.InsertCategory(category)
+func CreateCategory(category *types.CategoryRequest) error {
+	if _, err := repository.GetCategoryByName(category.Name); err == nil {
+		return errors.New("category already exists")
+	}
+	if category.Type != "expense" && category.Type != "income" {
+		return errors.New("category type must be either expense or income")
+	}
+	err := repository.InsertCategory(category)
+	if err != nil {
+		return err
+	}
+	return nil
 }
 
 func GetCategories(category types.CategoryRequest) ([]models.Category, error) {

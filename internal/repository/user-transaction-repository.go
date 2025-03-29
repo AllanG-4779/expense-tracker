@@ -2,12 +2,13 @@ package repository
 
 import (
 	"errors"
+	"strings"
+
 	"github.com/allang-4779/financer/internal/constants"
 	"github.com/allang-4779/financer/internal/database"
 	"github.com/allang-4779/financer/internal/models"
 	"github.com/allang-4779/financer/internal/types"
 	"gorm.io/gorm"
-	"strings"
 )
 
 func CreateTransactionAccount(request models.Account) error {
@@ -52,8 +53,8 @@ func AddTransaction(request models.Transaction) error {
 
 	return database.DB.Transaction(func(tx *gorm.DB) error {
 		var account models.Account
-		err := database.DB.Find(&account, request.AccountID)
-		if err != nil {
+		err := tx.Find(&account, request.AccountID)
+		if err.Error != nil {
 			return err.Error
 		}
 		if strings.ToLower(request.Type) == constants.EXPENSE {
@@ -67,11 +68,22 @@ func AddTransaction(request models.Transaction) error {
 		} else {
 			return errors.New("expense type undefined")
 		}
-		result := database.DB.Save(&account)
+		result := tx.Save(&account)
 		if result.Error != nil {
 			return result.Error
 		}
-		result = database.DB.Create(&request)
+		result = tx.Create(&request)
+		if result.Error != nil {
+			return result.Error
+		}
 		return nil
 	})
+}
+
+func CreateBudget(budget models.Budget) error {
+	err := database.DB.Create(&budget)
+	if err != nil {
+		return err.Error
+	}
+	return nil
 }

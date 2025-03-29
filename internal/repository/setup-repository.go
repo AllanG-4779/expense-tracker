@@ -4,10 +4,9 @@ import (
 	"github.com/allang-4779/financer/internal/database"
 	"github.com/allang-4779/financer/internal/models"
 	"github.com/allang-4779/financer/internal/types"
-	"log"
 )
 
-func InsertCategory(category *types.CategoryRequest) {
+func InsertCategory(category *types.CategoryRequest) error {
 	var categoryCreate = models.Category{
 		Name:        category.Name,
 		Icon:        category.Icon,
@@ -15,9 +14,11 @@ func InsertCategory(category *types.CategoryRequest) {
 		Description: category.Description,
 	}
 	err := database.DB.Create(&categoryCreate)
-	if err != nil {
-		log.Panic(err)
+	if err.Error != nil {
+		return err.Error
 	}
+	return nil
+
 }
 
 func GetCategories(request types.CategoryRequest) ([]models.Category, error) {
@@ -28,8 +29,8 @@ func GetCategories(request types.CategoryRequest) ([]models.Category, error) {
 func GetCategoryByName(name string) (*models.Category, error) {
 	var category models.Category
 	err := database.DB.Where(&models.Category{Name: name}).First(&category)
-	if err != nil {
-		log.Panic(err)
+	if err.Error != nil {
+		return nil, err.Error
 	}
 	return &category, nil
 }

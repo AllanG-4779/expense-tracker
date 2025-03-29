@@ -29,7 +29,8 @@ func MigrateDB() {
 	err := DB.AutoMigrate(models.SystemUser{},
 		models.Account{}, models.Category{}, models.Transaction{}, models.Budget{})
 	if err != nil {
-		log.Println("Migration failed:", err)
+		log.Fatal("Migration failed:", err)
+
 	}
 
 	log.Println("Database migrated successfully")
