@@ -12,12 +12,11 @@ type Configuration struct {
 	DBPassword string
 	DBUser     string
 	DBName     string
-	DBPort string
+	DBPort     string
 }
 
-// INSTALL GODOTENV FOR LOADING OF ENVIRONMENT VARIABLES
 func InitializeConfiguration() *Configuration {
-	err := godotenv.Load();
+	err := godotenv.Load()
 	if err != nil {
 		log.Println(err)
 		log.Fatal("Could not load environment variables")
@@ -25,10 +24,10 @@ func InitializeConfiguration() *Configuration {
 	}
 
 	return &Configuration{
-		DBHost: os.Getenv("DB_HOST"),
+		DBHost:     os.Getenv("DB_HOST"),
 		DBPassword: os.Getenv("DB_PASSWORD"),
-		DBUser: os.Getenv("DB_USER"),
-		DBName: os.Getenv("DB_NAME"),
-		DBPort: os.Getenv("DB_PORT"),
+		DBUser:     os.Getenv("DB_USER"),
+		DBName:     os.Getenv("DB_NAME"),
+		DBPort:     os.Getenv("DB_PORT"),
 	}
 }

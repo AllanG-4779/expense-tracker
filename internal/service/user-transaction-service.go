@@ -6,6 +6,7 @@ import (
 	"github.com/allang-4779/financer/internal/repository"
 	"github.com/allang-4779/financer/internal/types"
 	"log"
+	"strconv"
 	"time"
 )
 
@@ -37,14 +38,16 @@ func AddTransaction(transaction types.TransactionRequest, username string) error
 		return errors.New("could not retrieve category")
 	}
 	log.Printf("Adding transaction to user %v account %v", user, account)
-	if account.UserID != user.ID {
-		return errors.New("account does not belong to user")
+	if account.UserID != user.ID || account.ID == 0 {
+		return errors.New("account does not belong to user or does not exist")
 	}
 	var rTransaction models.Transaction
 	rTransaction.AccountID = transaction.AccountID
 	rTransaction.Amount = transaction.Amount
 	rTransaction.CategoryID = category.ID
+	rTransaction.Title = transaction.Title
 	rTransaction.Description = transaction.Description
+	rTransaction.UserID = user.ID
 	// Formatted date
 	date, dateErr := formatDate(transaction.Date)
 	if dateErr != nil {
@@ -72,6 +75,7 @@ func CreateBudget(budget types.BudgetRequest, username string) error {
 	rBudget.Balance = budget.Balance
 	rBudget.CategoryID = category.ID
 	rBudget.UserID = user.ID
+	rBudget.Balance = budget.Amount
 	// Formatted date
 	startDate, startDateErr := formatDate(budget.StartDate)
 	if startDateErr != nil {
@@ -85,6 +89,19 @@ func CreateBudget(budget types.BudgetRequest, username string) error {
 	}
 	rBudget.EndDate = endDate
 	return repository.CreateBudget(rBudget)
+}
+
+func GetTransactions(request types.FetchRequest, username string) ([]models.Transaction, error) {
+	user, err := repository.GetUser(username, "username")
+	if err != nil {
+		return nil, errors.New("could not retrieve user from context")
+	}
+	request.Username = strconv.Itoa(int(user.ID))
+	transactions, err := repository.GetTransactions(request)
+	if err != nil {
+		return nil, errors.New("could not retrieve transactions")
+	}
+	return transactions, nil
 }
 
 func formatDate(date string) (string, error) {

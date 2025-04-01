@@ -20,6 +20,7 @@ type Account struct {
 type Transaction struct {
 	gorm.Model
 	Amount      float64 `gorm:"type:decimal(10,2);not null"`
+	Title       string  `gorm:"size:255;"`
 	Description string  `gorm:"type:text"`
 	Date        string  `gorm:"type:date;not null"`
 	Type        string  `gorm:"check:type in ('expense','income')"` //check ( type in ('expense', 'income') ),

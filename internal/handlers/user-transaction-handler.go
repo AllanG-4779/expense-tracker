@@ -64,3 +64,25 @@ func CreateBudget(context *gin.Context) {
 		return
 	}
 }
+
+func GetTransactions(context *gin.Context) {
+	authCtx := context.MustGet(constants.CLAIMS).(jwt.MapClaims)
+	username := authCtx["username"].(string)
+	var account types.FetchRequest
+	if context.ShouldBindJSON(&account) == nil {
+		transactions, err := service.GetTransactions(account, username)
+		if err != nil {
+			context.JSON(400, gin.H{"message": "Error fetching transactions"})
+			return
+		}
+		if len(transactions) == 0 {
+			context.JSON(200, gin.H{"message": "No transactions found"})
+			return
+		}
+		context.JSON(200, gin.H{"message": "Transactions fetched", "transactions": transactions})
+		return
+	} else {
+		context.JSON(400, gin.H{"message": "Error fetching transactions"})
+		return
+	}
+}

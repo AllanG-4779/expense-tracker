@@ -73,7 +73,5 @@ func GetLoginAccount(email string) (error, models.SystemUser) {
 		log.Printf("Error fetching user: %v", err)
 		return err.Error, loginAccount
 	}
-
 	return nil, loginAccount
-
 }

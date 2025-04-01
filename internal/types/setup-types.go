@@ -19,6 +19,7 @@ type TransactionRequest struct {
 	Amount      float64 `json:"amount"`
 	Description string  `json:"description"`
 	Date        string  `json:"date"`
+	Title       string  `json:"title"`
 	Type        string  `json:"type"`
 	CategoryID  string  `json:"category"`
 	AccountID   uint    `json:"account_id"`
@@ -30,4 +31,9 @@ type BudgetRequest struct {
 	StartDate    string  `json:"start_date"`
 	UserId       uint    `json:"user_id"`
 	EndDate      string  `json:"end_date"`
+}
+type FetchRequest struct {
+	Page     int    `json:"page"`
+	Username string `json:"username"`
+	Size     int    `json:"size"`
 }

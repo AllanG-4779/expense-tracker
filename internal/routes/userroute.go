@@ -18,4 +18,5 @@ func UserRoutesSetup(engine *gin.Engine) {
 	authenticated.POST(constants.ActivateAccount, handlers.ActivateAccount)
 	authenticated.POST(constants.AddTransaction, handlers.AddTransaction)
 	authenticated.POST(constants.CreateBudget, handlers.CreateBudget)
+	authenticated.GET(constants.GetTransactions, handlers.GetTransactions)
 }

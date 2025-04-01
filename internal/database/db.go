@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"github.com/allang-4779/financer/internal/configuration"
 	"github.com/allang-4779/financer/internal/models"
+	customqueries "github.com/allang-4779/financer/internal/models/custom-queries"
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
 	"log"
@@ -32,6 +33,7 @@ func MigrateDB() {
 		log.Fatal("Migration failed:", err)
 
 	}
+	customqueries.CreateTriggerIfNotExists(DB)
 
 	log.Println("Database migrated successfully")
 }

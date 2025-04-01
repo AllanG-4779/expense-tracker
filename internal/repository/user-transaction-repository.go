@@ -2,6 +2,7 @@ package repository
 
 import (
 	"errors"
+	"strconv"
 	"strings"
 
 	"github.com/allang-4779/financer/internal/constants"
@@ -57,6 +58,12 @@ func AddTransaction(request models.Transaction) error {
 		if err.Error != nil {
 			return err.Error
 		}
+		if account.ID == 0 {
+			return errors.New("account does not exist")
+		}
+		if account.UserID != request.UserID {
+			return errors.New("account does not belong to user")
+		}
 		if strings.ToLower(request.Type) == constants.EXPENSE {
 			if account.Balance < request.Amount {
 				return errors.New(constants.InsufficientFunds)
@@ -86,4 +93,20 @@ func CreateBudget(budget models.Budget) error {
 		return err.Error
 	}
 	return nil
+}
+func GetTransactions(request types.FetchRequest) ([]models.Transaction, error) {
+	var transactions []models.Transaction
+	size := request.Size
+	offset := request.Size * (request.Page)
+	userId, errEnt := strconv.Atoi(request.Username)
+	if errEnt != nil {
+		return nil, errors.New("could not convert user id")
+	}
+	err := database.DB.Limit(size).Offset(offset).
+		Where("user_id = ? AND deleted_at IS NULL", userId).
+		Find(&transactions).Error
+	if err != nil {
+		return nil, err
+	}
+	return transactions, nil
 }

@@ -17,4 +17,5 @@ const (
 	ActivateAccount = "/activate"
 	AddTransaction  = "/add/transaction"
 	CreateBudget    = "/create/budget"
+	GetTransactions = "/get/transactions"
 )
