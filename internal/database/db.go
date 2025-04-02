@@ -13,8 +13,8 @@ import (
 var DB *gorm.DB
 
 func InitDB(cfg *configuration.Configuration) {
-	dsn := fmt.Sprintf("host=%s user=%s port=%s password=%s dbname=%s sslmode=disable",
-		cfg.DBHost, cfg.DBUser, cfg.DBPort, cfg.DBPassword, cfg.DBName)
+	dsn := fmt.Sprintf("host=%s user=%s port=%s password=%s dbname=%s sslmode=%s",
+		cfg.DBHost, cfg.DBUser, cfg.DBPort, cfg.DBPassword, cfg.DBName, cfg.SSLMode)
 
 	var err error
 

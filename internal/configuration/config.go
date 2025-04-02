@@ -11,6 +11,7 @@ type Configuration struct {
 	DBHost     string
 	DBPassword string
 	DBUser     string
+	SSLMode    string
 	DBName     string
 	DBPort     string
 }
@@ -29,5 +30,6 @@ func InitializeConfiguration() *Configuration {
 		DBUser:     os.Getenv("DB_USER"),
 		DBName:     os.Getenv("DB_NAME"),
 		DBPort:     os.Getenv("DB_PORT"),
+		SSLMode:    os.Getenv("SSL_MODE"),
 	}
 }
