@@ -51,7 +51,6 @@ func GetTransactionAccounts(request types.AccountRequest) ([]models.Transaction,
 }
 
 func AddTransaction(request models.Transaction) error {
-
 	return database.DB.Transaction(func(tx *gorm.DB) error {
 		var account models.Account
 		err := tx.Find(&account, request.AccountID)

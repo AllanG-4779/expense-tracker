@@ -6,6 +6,7 @@ import (
 
 	"github.com/allang-4779/financer/internal/configuration"
 	"github.com/allang-4779/financer/internal/database"
+	"github.com/gin-contrib/cors"
 
 	"github.com/allang-4779/financer/internal/routes"
 	"github.com/allang-4779/financer/internal/util"
@@ -28,6 +29,14 @@ func main() {
 	// Setup GIN server
 
 	r := gin.Default()
+	r.Use(cors.New(cors.Config{
+		AllowAllOrigins: true,
+		AllowHeaders:  []string{"*"},
+		AllowMethods:     []string{"GET", "POST", "PUT", "DELETE"},	
+		ExposeHeaders:    []string{"Authorization"},
+		MaxAge:           12 * time.Hour,
+		AllowCredentials: true,
+	}))
 
 	// REGISTER ROUTES
 	routes.UserRoutesSetup(r)
