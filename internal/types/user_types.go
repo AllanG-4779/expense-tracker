@@ -5,10 +5,7 @@ type LoginResponse struct {
 	Token      TokenResponse `json:"body"`
 	Status     int           `json:"status"`
 	Successful bool          `json:"successful"`
-	FirstName string        `json:"first_name"`
-	LastName  string        `json:"last_name"`
-	Email     string        `json:"email"`
-	Username  string        `json:"username"`
+	User      User		 `json:"user"`
 }
 
 type UserRegistration struct {
@@ -41,4 +38,11 @@ type AuthContext struct {
 	Sub   string `json:"sub"`
 	Iat   string `json:"iat"`
 	Iss   string `json:"iss"`
+}
+
+type User struct {
+	Username string `json:"username"`
+	FirstName string `json:"first_name"`
+	LastName  string `json:"last_name"`	
+	Email    string `json:"email"`	
 }
