@@ -55,13 +55,14 @@ func LoginUser(username string, password string) (types.LoginResponse, error) {
 	if err != nil {
 		loginResponse.Status = 500
 		loginResponse.Message = constants.InternalServerErrorMessage
-		return loginResponse, err
+		return loginResponse, err 
 	}
 
 	loginResponse.Token = types.TokenResponse{Token: response, ValidFor: 3600}
 	loginResponse.Message = constants.LoginSuccessfulMessage
 	loginResponse.Status = 200
 	usr := types.User{
+		
 		FirstName: user.FirstName,
 		LastName:  user.LastName,
 		Email:     user.Email,
