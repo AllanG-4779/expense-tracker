@@ -2,8 +2,9 @@ package service
 
 import (
 	"errors"
-	"github.com/allang-4779/financer/internal/models"
 	"log"
+
+	"github.com/allang-4779/financer/internal/models"
 
 	"github.com/allang-4779/financer/internal/constants"
 	"github.com/allang-4779/financer/internal/repository"
@@ -60,10 +61,13 @@ func LoginUser(username string, password string) (types.LoginResponse, error) {
 	loginResponse.Token = types.TokenResponse{Token: response, ValidFor: 3600}
 	loginResponse.Message = constants.LoginSuccessfulMessage
 	loginResponse.Status = 200
-	loginResponse.FirstName = user.FirstName
-	loginResponse.LastName = user.LastName
-	loginResponse.Email = user.Email
-	loginResponse.Username = user.Username	
+	usr := types.User{
+		FirstName: user.FirstName,
+		LastName:  user.LastName,
+		Email:     user.Email,
+		Username:  user.Username,
+	}
+	loginResponse.User = usr
 	loginResponse.Successful = true
 	return loginResponse, nil
 
