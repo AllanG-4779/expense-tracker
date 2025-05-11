@@ -60,6 +60,10 @@ func LoginUser(username string, password string) (types.LoginResponse, error) {
 	loginResponse.Token = types.TokenResponse{Token: response, ValidFor: 3600}
 	loginResponse.Message = constants.LoginSuccessfulMessage
 	loginResponse.Status = 200
+	loginResponse.FirstName = user.FirstName
+	loginResponse.LastName = user.LastName
+	loginResponse.Email = user.Email
+	loginResponse.Username = user.Username	
 	loginResponse.Successful = true
 	return loginResponse, nil
 
