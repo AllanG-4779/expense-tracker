@@ -2,12 +2,13 @@ package service
 
 import (
 	"errors"
-	"github.com/allang-4779/financer/internal/models"
-	"github.com/allang-4779/financer/internal/repository"
-	"github.com/allang-4779/financer/internal/types"
 	"log"
 	"strconv"
 	"time"
+
+	"github.com/allang-4779/financer/internal/models"
+	"github.com/allang-4779/financer/internal/repository"
+	"github.com/allang-4779/financer/internal/types"
 )
 
 func ActivateAccount(account types.AccountRequest, username string) error {
@@ -112,4 +113,20 @@ func formatDate(date string) (string, error) {
 	}
 	date = formatted.Format("2006-01-02")
 	return date, nil
+}
+
+func GetUserAccounts(username string) ([]models.Account, error) {
+	user, err := repository.GetUser(username, "username")
+	if err != nil {
+		return nil, errors.New("could not retrieve user from context")
+	}
+	accounts, err := repository.GetTransactionAccounts(types.AccountRequest{
+		UserId: user.ID,
+		Page:   0,
+		Size:   10,
+	})
+	if err != nil {
+		return nil, errors.New("could not retrieve accounts")
+	}
+	return accounts, nil
 }

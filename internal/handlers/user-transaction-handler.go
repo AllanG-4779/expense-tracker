@@ -85,4 +85,27 @@ func GetTransactions(context *gin.Context) {
 		context.JSON(400, gin.H{"message": "Error fetching transactions"})
 		return
 	}
+	
+}
+
+func GetUserAccounts(context *gin.Context) {
+	authCtx := context.MustGet(constants.CLAIMS).(jwt.MapClaims)
+	username := authCtx["username"].(string)
+	var account types.FetchRequest
+	if context.ShouldBindJSON(&account) == nil {
+		accounts, err := service.GetUserAccounts(username)
+		if err != nil {
+			context.JSON(400, gin.H{"message": "Error fetching accounts"})
+			return
+		}
+		if len(accounts) == 0 {
+			context.JSON(200, gin.H{"message": "No accounts found"})
+			return
+		}
+		context.JSON(200, gin.H{"message": "Accounts fetched", "accounts": accounts})
+		return
+	} else {
+		context.JSON(400, gin.H{"message": "Error fetching accounts"})
+		return
+	}
 }

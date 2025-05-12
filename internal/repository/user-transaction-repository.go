@@ -38,12 +38,11 @@ func GetUserAccount(id uint) (*models.Account, error) {
 	return &account, nil
 }
 
-func GetTransactionAccounts(request types.AccountRequest) ([]models.Transaction, error) {
-	var accounts []models.Transaction
+func GetTransactionAccounts(request types.AccountRequest) ([]models.Account, error) {
+	var accounts []models.Account
 	size := request.Size
 	offset := request.Size * (request.Page)
-
-	err := database.DB.Limit(size).Offset(offset).Find(&accounts).Error
+	err := database.DB.Limit(size).Offset(offset).Where("user_id = ?", request.UserId).Error
 	if err != nil {
 		return nil, err
 	}
