@@ -11,6 +11,7 @@ const (
 const (
 	SetupEntryPoint       = ApiEntryPoint + "/setup"
 	SetupCategoryEndpoint = "/category"
+	SetupCategoryEndpointGET = "/category/get"
 )
 
 const (
