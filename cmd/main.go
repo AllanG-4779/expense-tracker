@@ -30,12 +30,12 @@ func main() {
 
 	r := gin.Default()
 	r.Use(cors.New(cors.Config{
-		AllowAllOrigins: true,
+		AllowOrigins: []string{"http://localhost:3000"},
 		AllowHeaders:  []string{"*"},
 		AllowMethods:     []string{"GET", "POST", "PUT", "DELETE"},	
 		ExposeHeaders:    []string{"Authorization"},
 		MaxAge:           12 * time.Hour,
-		AllowCredentials: false,
+		AllowCredentials: true,
 	}))
 
 	// REGISTER ROUTES
