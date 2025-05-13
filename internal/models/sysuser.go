@@ -12,7 +12,7 @@ type SystemUser struct {
 	Username     string        `gorm:"uniqueIndex;not null"`
 	Password     string        `gorm:"type:varchar(400);not null"`
 	Status       bool          `gorm:"default:false"`
-	Account      Account       `gorm:"foreignKey:UserID"`
+	Account      []Account       `gorm:"foreignKey:UserID"`
 	Budget       []Budget      `gorm:"foreignKey:UserID"`
 	Transactions []Transaction `gorm:"foreignKey:UserID"`
 }

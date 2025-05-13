@@ -13,7 +13,7 @@ type Category struct {
 }
 type Account struct {
 	gorm.Model
-	UserID  uint `gorm:"uniqueIndex"`
+	UserID  uint
 	Name    string
 	Balance float64
 }
