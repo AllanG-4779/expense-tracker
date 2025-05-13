@@ -35,7 +35,7 @@ func main() {
 		AllowMethods:     []string{"GET", "POST", "PUT", "DELETE"},	
 		ExposeHeaders:    []string{"Authorization"},
 		MaxAge:           12 * time.Hour,
-		AllowCredentials: true,
+		AllowCredentials: false,
 	}))
 
 	// REGISTER ROUTES
