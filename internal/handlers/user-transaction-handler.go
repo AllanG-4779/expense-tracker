@@ -91,10 +91,10 @@ func GetTransactions(context *gin.Context) {
 func GetUserAccounts(context *gin.Context) {
 	authCtx := context.MustGet(constants.CLAIMS).(jwt.MapClaims)
 	username := authCtx["username"].(string)
-	var account types.FetchRequest
-	if context.ShouldBindJSON(&account) == nil {
+	
 		accounts, err := service.GetUserAccounts(username)
 		if err != nil {
+			log.Println(err)
 			context.JSON(400, gin.H{"message": "Error fetching accounts"})
 			return
 		}
@@ -103,9 +103,6 @@ func GetUserAccounts(context *gin.Context) {
 			return
 		}
 		context.JSON(200, gin.H{"message": "Accounts fetched", "accounts": accounts})
-		return
-	} else {
-		context.JSON(400, gin.H{"message": "Error fetching accounts"})
-		return
-	}
+		
+	
 }
