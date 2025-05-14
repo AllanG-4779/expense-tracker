@@ -5,14 +5,17 @@ import (
 	"log"
 	"time"
 
+	"github.com/allang-4779/financer/internal/types"
 	"github.com/allang-4779/financer/internal/util"
 	"github.com/golang-jwt/jwt/v5"
 )
 
-func GenerateAccessToken(payload jwt.MapClaims, expirySeconds uint) (string, error) {
+func GenerateAccessToken(payload jwt.MapClaims, expirySeconds int) (types.TokenResponse, error) {
 	log.Print("Generating token with payload", payload)
-	payload["exp"] = time.Now().Add(time.Second * time.Duration(expirySeconds)).Unix()
-	payload["iat"] = time.Now().Unix()
+	var iat = time.Now();
+	var exp =iat.Add(time.Second * time.Duration(expirySeconds)).Unix()
+	payload["exp"] = exp
+	payload["iat"] =iat.Unix()
 	payload["iss"] = "financer"
 	payload["sub"] = payload["username"]
 	payload["aud"] = "financer"
@@ -22,9 +25,16 @@ func GenerateAccessToken(payload jwt.MapClaims, expirySeconds uint) (string, err
 	tokenString, err := token.SignedString(util.GetPrivateKey())
 	if err != nil {
 		log.Println("Error generating token", err)
-		return "", errors.New("could not generate access token")
+		return types.TokenResponse{}, errors.New("could not generate access token")
 	}
-	return tokenString, nil
+	log.Println("Token generated successfully")
+	tokenResponse := types.TokenResponse{
+		Token:     tokenString,
+		IssuedAt:  iat.Unix(),
+		ExpiresAt: exp,
+		ValidFor:  expirySeconds,
+	}
+	return tokenResponse, nil
 
 }
 

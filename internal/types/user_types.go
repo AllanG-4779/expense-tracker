@@ -31,6 +31,8 @@ type LoginRequest struct {
 type TokenResponse struct {
 	Token    string `json:"token"`
 	ValidFor int    `json:"valid_for"`
+	IssuedAt int64 `json:"issued_at"`
+	ExpiresAt int64 `json:"expires_at"`
 }
 
 type AuthContext struct {
