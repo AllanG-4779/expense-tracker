@@ -106,13 +106,21 @@ func GetTransactions(request types.FetchRequest, username string) ([]models.Tran
 }
 
 func formatDate(date string) (string, error) {
-	format := "02-01-2006"
-	formatted, err := time.Parse(format, date)
+	expectedFormat := "2006-01-02"
+	_, err := time.Parse(expectedFormat, date)
+	if err == nil {
+		// Already in correct format
+		return date, nil
+	}
+
+	// Try parsing fallback format: DD-MM-YYYY
+	fallbackFormat := "02-01-2006"
+	parsedDate, err := time.Parse(fallbackFormat, date)
 	if err != nil {
 		return "", errors.New("could not parse date")
 	}
-	date = formatted.Format("2006-01-02")
-	return date, nil
+
+	return parsedDate.Format(expectedFormat), nil
 }
 
 func GetUserAccounts(username string) ([]models.Account, error) {
