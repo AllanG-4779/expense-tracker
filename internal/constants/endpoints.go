@@ -20,4 +20,6 @@ const (
 	CreateBudget    = "/create/budget"
 	GetTransactions = "/get/transactions"
 	GetAccounts     = "/get/accounts"
+	UpdateTransaction = "/update/transaction"
+	FilterTransaction = "/filter/transaction"
 )

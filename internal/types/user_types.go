@@ -48,3 +48,12 @@ type User struct {
 	LastName  string `json:"last_name"`	
 	Email    string `json:"email"`	
 }
+
+type FilterRequest struct {
+	StartDate string `json:"start_date"`
+	EndDate   string `json:"end_date"`
+	CategoryID  uint `json:"category"`
+	UserId     uint `json:"user_id"`
+	AccountID   uint `json:"account_id"`
+	TransactionType string `json:"transaction_type"`
+}

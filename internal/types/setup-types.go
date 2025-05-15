@@ -23,6 +23,7 @@ type TransactionRequest struct {
 	Type        string  `json:"type"`
 	CategoryID  string  `json:"category"`
 	AccountID   uint    `json:"account_id"`
+	CategoryId uint    `json:"category_id"`
 }
 type BudgetRequest struct {
 	Amount       float64 `json:"amount"`

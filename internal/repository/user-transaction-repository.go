@@ -110,3 +110,53 @@ func GetTransactions(request types.FetchRequest) ([]models.Transaction, error) {
 	}
 	return transactions, nil
 }
+
+func GetTransactionById(id uint) (*models.Transaction, error) {
+	var transaction models.Transaction
+	err := database.DB.Find(&transaction, id).Error
+	if err != nil {
+		return nil, err
+	}
+	return &transaction, nil
+}
+
+func GetTransactionsByAccountId(id uint) ([]models.Transaction, error) {
+	var transactions []models.Transaction
+	err := database.DB.Preload("Category").Where("account_id = ?", id).Find(&transactions).Error
+	if err != nil {
+		return nil, err
+	}
+	return transactions, nil
+}
+func GetTransactionByCategoryId(id uint, userId uint) ([]models.Transaction, error) {
+	var transactions []models.Transaction
+	err := database.DB.Preload("Category").Where("category_id = ? and user_id = ?", id, userId).Find(&transactions).Error
+	if err != nil {
+		return nil, err
+	}
+	return transactions, nil
+}
+func GetTransactionByDate(start string, end string, userId uint) ([]models.Transaction, error) {
+	var transactions []models.Transaction
+	err := database.DB.Preload("Category").Where("date between ? and ? and user_id = ?", start,end, userId).Find(&transactions).Error
+	if err != nil {
+		return nil, err
+	}
+	return transactions, nil
+}
+
+func UpdateTransaction (request models.Transaction) error {
+	err := database.DB.Updates(&request).Error
+	if err != nil {
+		return err
+	}
+	return nil
+}
+func DeleteTransaction (id uint) error {
+	var transaction models.Transaction
+	err := database.DB.Delete(&transaction, id).Error
+	if err != nil {
+		return err
+	}
+	return nil
+}

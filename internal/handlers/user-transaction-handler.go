@@ -106,3 +106,43 @@ func GetUserAccounts(context *gin.Context) {
 		
 	
 }
+
+func UpdateTransaction(context *gin.Context) {
+	authCtx := context.MustGet(constants.CLAIMS).(jwt.MapClaims)
+	username := authCtx["username"].(string)
+	var transaction types.TransactionRequest
+	if context.ShouldBindJSON(&transaction) == nil {
+		err := service.UpdateTransaction(transaction, username)
+		if err != nil {
+			context.JSON(400, gin.H{"message": "Error updating transaction"})
+			return
+		}
+		context.JSON(200, gin.H{"message": "Transaction updated"})
+		return
+	} else {
+		context.JSON(400, gin.H{"message": "Error updating transaction"})
+		return
+	}
+}
+
+func FilterTransactions(context *gin.Context) {
+	authCtx := context.MustGet(constants.CLAIMS).(jwt.MapClaims)
+	username := authCtx["username"].(string)
+	var filter types.FilterRequest
+	if context.ShouldBindJSON(&filter) == nil {
+		transactions, err := service.FilterTransactions(filter, username)
+		if err != nil {
+			context.JSON(400, gin.H{"message": "Error filtering transactions"})
+			return
+		}
+		if len(transactions) == 0 {
+			context.JSON(200, gin.H{"message": "No transactions found"})
+			return
+		}
+		context.JSON(200, gin.H{"message": "Transactions filtered", "transactions": transactions})
+		return
+	} else {
+		context.JSON(400, gin.H{"message": "Error filtering transactions"})
+		return
+	}
+}

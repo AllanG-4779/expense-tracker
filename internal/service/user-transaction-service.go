@@ -140,3 +140,64 @@ func GetUserAccounts(username string) ([]models.Account, error) {
 	}
 	return accounts, nil
 }
+func UpdateTransaction(request types.TransactionRequest, username string) error {
+	user, err := repository.GetUser(username, "username")
+	if err != nil {
+		return errors.New("could not retrieve user from context")
+	}
+	transaction, err := repository.GetTransactionById(request.AccountID)
+	if err != nil {
+		return errors.New("could not retrieve transaction")
+	}
+	if transaction.UserID != user.ID {
+		return errors.New("transaction does not belong to user")
+	}
+	transaction.Amount = request.Amount
+	transaction.Description = request.Description
+	transaction.Title = request.Title
+	transaction.Type = request.Type
+	transaction.CategoryID = request.CategoryId
+	transaction.AccountID = request.AccountID
+	return repository.UpdateTransaction(*transaction)
+}
+
+func FilterTransactions(request types.FilterRequest, username string) ([]models.Transaction, error) {
+	user, err := repository.GetUser(username, "username")
+	if err != nil {
+		return nil, errors.New("could not retrieve user from context")
+	}
+	
+	if request.AccountID > 0 {
+		account, err := repository.GetTransactionsByAccountId(request.AccountID)
+		if err != nil {
+			return nil, errors.New("could not retrieve account")
+		}
+		return account, nil
+		
+	}
+	if request.CategoryID > 0 {
+		category, err := repository.GetTransactionByCategoryId(request.CategoryID, user.ID)
+		if err != nil {
+			return nil, errors.New("could not retrieve category")
+		}
+		return category, nil
+	}
+	if request.StartDate != "" && request.EndDate != "" {
+		startDate, err := formatDate(request.StartDate)
+		if err != nil {
+			return nil, errors.New("could not format start date")
+		}
+		endDate, err := formatDate(request.EndDate)
+		if err != nil {
+			return nil, errors.New("could not format end date")
+		}
+		category, err := repository.GetTransactionByDate(startDate, endDate, user.ID)
+		if err != nil {
+			return nil, errors.New("could not retrieve category")
+		}
+
+		return category, nil
+	}
+	return nil, errors.New("could not retrieve transactions")	
+	
+}
