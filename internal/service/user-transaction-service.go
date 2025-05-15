@@ -145,7 +145,7 @@ func UpdateTransaction(request types.TransactionRequest, username string) error 
 	if err != nil {
 		return errors.New("could not retrieve user from context")
 	}
-	transaction, err := repository.GetTransactionById(request.AccountID)
+	transaction, err := repository.GetTransactionById(request.TransactionID)
 	if err != nil {
 		return errors.New("could not retrieve transaction")
 	}

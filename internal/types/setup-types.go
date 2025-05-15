@@ -24,6 +24,10 @@ type TransactionRequest struct {
 	CategoryID  string  `json:"category"`
 	AccountID   uint    `json:"account_id"`
 	CategoryId uint    `json:"category_id"`
+	TransactionID uint   `json:"transaction_id"`
+	UserId      uint    `json:"user_id"`
+	Page        int     `json:"page"`
+	Size        int     `json:"size"`
 }
 type BudgetRequest struct {
 	Amount       float64 `json:"amount"`
