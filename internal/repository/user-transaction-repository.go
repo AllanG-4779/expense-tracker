@@ -102,7 +102,7 @@ func GetTransactions(request types.FetchRequest) ([]models.Transaction, error) {
 	if errEnt != nil {
 		return nil, errors.New("could not convert user id")
 	}
-	err := database.DB.Limit(size).Offset(offset).
+	err := database.DB.Preload("Category").Limit(size).Offset(offset).
 		Where("user_id = ? AND deleted_at IS NULL", userId).
 		Find(&transactions).Error
 	if err != nil {

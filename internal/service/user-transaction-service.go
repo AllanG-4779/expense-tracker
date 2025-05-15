@@ -99,9 +99,11 @@ func GetTransactions(request types.FetchRequest, username string) ([]models.Tran
 	}
 	request.Username = strconv.Itoa(int(user.ID))
 	transactions, err := repository.GetTransactions(request)
+	
 	if err != nil {
 		return nil, errors.New("could not retrieve transactions")
 	}
+
 	return transactions, nil
 }
 
