@@ -27,6 +27,7 @@ type Transaction struct {
 	CategoryID  uint    `gorm:"not null"`
 	UserID      uint    `gorm:"null;"`
 	AccountID   uint    `gorm:"not null"`
+	Category    Category `gorm:"foreignkey:CategoryID"`
 }
 
 type Budget struct {
