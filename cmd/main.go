@@ -30,7 +30,7 @@ func main() {
 
 	r := gin.Default()
 	r.Use(cors.New(cors.Config{
-		AllowOrigins: []string{"http://localhost:3000"},
+		AllowOrigins: []string{"http://localhost:3000","https://expense-tracker-frontend-beryl-one.vercel.app"},
 		AllowHeaders:  []string{"*"},
 		AllowMethods:     []string{"GET", "POST", "PUT", "DELETE"},	
 		ExposeHeaders:    []string{"Authorization"},
