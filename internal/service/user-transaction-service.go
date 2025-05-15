@@ -152,12 +152,40 @@ func UpdateTransaction(request types.TransactionRequest, username string) error 
 	if transaction.UserID != user.ID {
 		return errors.New("transaction does not belong to user")
 	}
-	transaction.Amount = request.Amount
-	transaction.Description = request.Description
-	transaction.Title = request.Title
-	transaction.Type = request.Type
-	transaction.CategoryID = request.CategoryId
-	transaction.AccountID = request.AccountID
+	if request.Amount> 0{
+		transaction.Amount = request.Amount
+	}
+	if request.Date != "" {
+		date, dateErr := formatDate(request.Date)
+		if dateErr != nil {
+			return errors.New("could not format date")
+		}
+		transaction.Date = date
+	}
+	if request.CategoryId != 0 {
+		category, categoryErr := repository.GetCategoryByName(request.CategoryID)
+		if categoryErr != nil {
+			return errors.New("could not retrieve category")
+		}
+		transaction.CategoryID = category.ID
+	}
+	if request.AccountID != 0 {
+		account, err := repository.GetUserAccount(request.AccountID)
+		if err != nil {
+			return errors.New("could not retrieve account")
+		}
+		if account.UserID != user.ID || account.ID == 0 {
+			return errors.New("account does not belong to user or does not exist")
+		}
+		transaction.AccountID = request.AccountID
+	}
+	if request.Description != "" {
+		transaction.Description = request.Description
+	}
+	if request.Title != "" {
+		transaction.Title = request.Title
+	}
+	
 	return repository.UpdateTransaction(*transaction)
 }
 
