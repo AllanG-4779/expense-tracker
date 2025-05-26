@@ -229,3 +229,18 @@ func FilterTransactions(request types.FilterRequest, username string) ([]models.
 	return nil, errors.New("could not retrieve transactions")	
 	
 }
+
+func DeleteTransaction(id uint, username string) error {
+	user, err := repository.GetUser(username, "username")
+	if err != nil {
+		return errors.New("could not retrieve user from context")
+	}
+	transaction, err := repository.GetTransactionById(id)
+	if err != nil {
+		return errors.New("could not retrieve transaction")
+	}
+	if transaction.UserID != user.ID {
+		return errors.New("transaction does not belong to user")
+	}
+	return repository.DeleteTransaction(id)
+}

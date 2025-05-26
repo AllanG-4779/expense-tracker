@@ -21,7 +21,7 @@ func CreateTransactionAccount(request models.Account) error {
 }
 
 func UpdateTransactionAccount(request models.Account) error {
-
+   
 	err := database.DB.Updates(request)
 	if err != nil {
 		return err.Error
@@ -102,7 +102,7 @@ func GetTransactions(request types.FetchRequest) ([]models.Transaction, error) {
 	if errEnt != nil {
 		return nil, errors.New("could not convert user id")
 	}
-	err := database.DB.Preload("Category").Limit(size).Offset(offset).
+	err := database.DB.Preload("Category").Limit(size).Offset(offset).Order("updated_at DESC").
 		Where("user_id = ? AND deleted_at IS NULL", userId).
 		Find(&transactions).Error
 	if err != nil {
@@ -113,7 +113,7 @@ func GetTransactions(request types.FetchRequest) ([]models.Transaction, error) {
 
 func GetTransactionById(id uint) (*models.Transaction, error) {
 	var transaction models.Transaction
-	err := database.DB.Find(&transaction, id).Error
+	err := database.DB.Find(&transaction, id).Error	
 	if err != nil {
 		return nil, err
 	}

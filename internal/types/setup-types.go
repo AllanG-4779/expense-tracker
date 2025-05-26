@@ -39,6 +39,7 @@ type BudgetRequest struct {
 }
 type FetchRequest struct {
 	Page     int    `json:"page"`
+	ID	   int   `json:"id"`
 	Username string `json:"username"`
 	Size     int    `json:"size"`
 }

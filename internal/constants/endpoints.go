@@ -22,4 +22,5 @@ const (
 	GetAccounts     = "/get/accounts"
 	UpdateTransaction = "/update/transaction"
 	FilterTransaction = "/filter/transaction"
+	DeleteTransaction = "/delete/transaction"
 )

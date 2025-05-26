@@ -1,12 +1,13 @@
 package handlers
 
 import (
+	"log"
+
 	"github.com/allang-4779/financer/internal/constants"
 	"github.com/allang-4779/financer/internal/service"
 	"github.com/allang-4779/financer/internal/types"
 	"github.com/gin-gonic/gin"
 	"github.com/golang-jwt/jwt/v5"
-	"log"
 )
 
 func ActivateAccount(context *gin.Context) {
@@ -114,13 +115,15 @@ func UpdateTransaction(context *gin.Context) {
 	if context.ShouldBindJSON(&transaction) == nil {
 		err := service.UpdateTransaction(transaction, username)
 		if err != nil {
-			context.JSON(400, gin.H{"message": "Error updating transaction"})
+			log.Println(err)
+			context.JSON(400, gin.H{"message": "Error updating transaction:"+ err.Error()})
 			return
 		}
 		context.JSON(200, gin.H{"message": "Transaction updated"})
 		return
 	} else {
-		context.JSON(400, gin.H{"message": "Error updating transaction"})
+		log.Println("Error binding JSON:", context.Errors)
+		context.JSON(400, gin.H{"message": "unable to bind json payload"})
 		return
 	}
 }
@@ -146,3 +149,24 @@ func FilterTransactions(context *gin.Context) {
 		return
 	}
 }
+
+	func DeleteTransaction(context *gin.Context) {
+	authCtx := context.MustGet(constants.CLAIMS).(jwt.MapClaims)
+	username := authCtx["username"].(string)
+	var request types.FetchRequest
+	if context.ShouldBindJSON(&request) == nil {
+		err := service.DeleteTransaction(uint(request.ID), username)
+		if err != nil {
+			log.Println(err)
+			context.JSON(400, gin.H{"message": "Error deleting transaction"})
+			return
+		}
+		context.JSON(200, gin.H{"message": "Transaction deleted"})
+		return
+	} else {
+		context.JSON(400, gin.H{"message": "Error deleting transaction"})
+		return
+	}
+
+}
+
