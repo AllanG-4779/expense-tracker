@@ -12,6 +12,7 @@ type AccountRequest struct {
 	Name    string  `json:"name"`
 	Balance float32 `json:"balance"`
 	UserId  uint    `json:"user_id"`
+	AccountID uint   `json:"account_id"`
 	Page    int     `json:"page"`
 	Size    int     `json:"size"`
 }

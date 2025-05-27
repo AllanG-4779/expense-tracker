@@ -145,15 +145,50 @@ func UpdateTransaction(request types.TransactionRequest, username string) error 
 	if err != nil {
 		return errors.New("could not retrieve user from context")
 	}
+
+     trxAccount, err := repository.GetAccount(request.AccountID)
+	if err != nil {
+		return errors.New("could not retrieve account")
+	}
+	if trxAccount.UserID != user.ID {
+		return errors.New("account does not belong to user")
+	}
+	 category , err := repository.GetCategoryByName(request.CategoryID)
+	
+	if err != nil {
+		return errors.New("could not retrieve category")
+	}
 	transaction, err := repository.GetTransactionById(request.TransactionID)
 	if err != nil {
 		return errors.New("could not retrieve transaction")
 	}
-	if transaction.UserID != user.ID {
-		return errors.New("transaction does not belong to user")
-	}
-	if request.Amount> 0{
-		transaction.Amount = request.Amount
+	
+	if request.Amount> 0{		
+		// update the account balance if the previous amount was less than the new amount
+		if category.Type == "expense"  {
+			if (transaction.Amount != request.Amount){
+				if (transaction.Amount < request.Amount){
+					if trxAccount.Balance < (request.Amount - transaction.Amount) {
+						return errors.New("insufficient funds")
+					}
+					trxAccount.Balance -= (request.Amount - transaction.Amount)
+				} else {
+					trxAccount.Balance += (transaction.Amount - request.Amount)
+				}
+			}
+		}else if category.Type == "income" {
+			if (transaction.Amount != request.Amount){
+				if (transaction.Amount < request.Amount){
+					trxAccount.Balance += (request.Amount - transaction.Amount)
+				} else {
+					trxAccount.Balance -= (transaction.Amount - request.Amount)
+				}
+			}
+		} else {
+			return errors.New("expense type undefined")
+		}
+	   
+		
 	}
 	if request.Date != "" {
 		date, dateErr := formatDate(request.Date)
@@ -169,23 +204,14 @@ func UpdateTransaction(request types.TransactionRequest, username string) error 
 		}
 		transaction.CategoryID = category.ID
 	}
-	if request.AccountID != 0 {
-		account, err := repository.GetUserAccount(request.AccountID)
-		if err != nil {
-			return errors.New("could not retrieve account")
-		}
-		if account.UserID != user.ID || account.ID == 0 {
-			return errors.New("account does not belong to user or does not exist")
-		}
-		transaction.AccountID = request.AccountID
-	}
+	
 	if request.Description != "" {
 		transaction.Description = request.Description
 	}
 	if request.Title != "" {
 		transaction.Title = request.Title
 	}
-	
+	repository.UpdateTransactionAccount(*trxAccount)
 	return repository.UpdateTransaction(*transaction)
 }
 
