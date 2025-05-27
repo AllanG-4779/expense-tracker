@@ -268,5 +268,25 @@ func DeleteTransaction(id uint, username string) error {
 	if transaction.UserID != user.ID {
 		return errors.New("transaction does not belong to user")
 	}
+	category, err:= repository.GetCategoryByName(transaction.Category.Name)
+	if err != nil {
+		return errors.New("could not retrieve category")
+	}
+	account, err := repository.GetAccount(transaction.AccountID)
+	if err != nil {
+		return errors.New("could not retrieve account")
+	}
+	if account.UserID != user.ID {
+		return errors.New("account does not belong to user")
+	}
+
+	if category.Type == "expense" {
+		account.Balance += transaction.Amount
+	}
+	if category.Type == "income" {
+		account.Balance -= transaction.Amount
+	}
+	repository.UpdateTransactionAccount(*account)
+
 	return repository.DeleteTransaction(id)
 }
