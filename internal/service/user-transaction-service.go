@@ -187,7 +187,7 @@ func UpdateTransaction(request types.TransactionRequest, username string) error 
 		} else {
 			return errors.New("expense type undefined")
 		}
-	   
+	   transaction.Amount = request.Amount
 		
 	}
 	if request.Date != "" {
