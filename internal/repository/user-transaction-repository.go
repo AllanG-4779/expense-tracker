@@ -21,7 +21,7 @@ func CreateTransactionAccount(request models.Account) error {
 }
 
 func UpdateTransactionAccount(request models.Account) error {
-   
+
 	err := database.DB.Updates(request)
 	if err != nil {
 		return err.Error
@@ -41,7 +41,7 @@ func GetUserAccount(id uint) (*models.Account, error) {
 func GetTransactionAccounts(request types.AccountRequest) ([]models.Account, error) {
 	var accounts []models.Account
 	size := request.Size
-	offset := request.Size * (request.Page)	
+	offset := request.Size * (request.Page)
 	err := database.DB.Limit(size).Offset(offset).Where("user_id = ?", request.UserId).Find(&accounts).Error
 	if err != nil {
 		print(err)
@@ -122,7 +122,7 @@ func GetTransactions(request types.FetchRequest) ([]models.Transaction, error) {
 
 func GetTransactionById(id uint) (*models.Transaction, error) {
 	var transaction models.Transaction
-	err := database.DB.Find(&transaction, id).Error	
+	err := database.DB.Preload("Category").Find(&transaction, id).Error
 	if err != nil {
 		return nil, err
 	}
@@ -147,21 +147,21 @@ func GetTransactionByCategoryId(id uint, userId uint) ([]models.Transaction, err
 }
 func GetTransactionByDate(start string, end string, userId uint) ([]models.Transaction, error) {
 	var transactions []models.Transaction
-	err := database.DB.Preload("Category").Where("date between ? and ? and user_id = ?", start,end, userId).Find(&transactions).Error
+	err := database.DB.Preload("Category").Where("date between ? and ? and user_id = ?", start, end, userId).Find(&transactions).Error
 	if err != nil {
 		return nil, err
 	}
 	return transactions, nil
 }
 
-func UpdateTransaction (request models.Transaction) error {
+func UpdateTransaction(request models.Transaction) error {
 	err := database.DB.Updates(&request).Error
 	if err != nil {
 		return err
 	}
 	return nil
 }
-func DeleteTransaction (id uint) error {
+func DeleteTransaction(id uint) error {
 	var transaction models.Transaction
 	err := database.DB.Delete(&transaction, id).Error
 	if err != nil {

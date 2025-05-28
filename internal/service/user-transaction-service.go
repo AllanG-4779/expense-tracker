@@ -2,6 +2,7 @@ package service
 
 import (
 	"errors"
+	"github.com/allang-4779/financer/internal/constants"
 	"log"
 	"strconv"
 	"time"
@@ -99,7 +100,7 @@ func GetTransactions(request types.FetchRequest, username string) ([]models.Tran
 	}
 	request.Username = strconv.Itoa(int(user.ID))
 	transactions, err := repository.GetTransactions(request)
-	
+
 	if err != nil {
 		return nil, errors.New("could not retrieve transactions")
 	}
@@ -146,15 +147,15 @@ func UpdateTransaction(request types.TransactionRequest, username string) error 
 		return errors.New("could not retrieve user from context")
 	}
 
-     trxAccount, err := repository.GetAccount(request.AccountID)
+	trxAccount, err := repository.GetAccount(request.AccountID)
 	if err != nil {
 		return errors.New("could not retrieve account")
 	}
 	if trxAccount.UserID != user.ID {
 		return errors.New("account does not belong to user")
 	}
-	 category , err := repository.GetCategoryByName(request.CategoryID)
-	
+	category, err := repository.GetCategoryByName(request.CategoryID)
+
 	if err != nil {
 		return errors.New("could not retrieve category")
 	}
@@ -162,33 +163,33 @@ func UpdateTransaction(request types.TransactionRequest, username string) error 
 	if err != nil {
 		return errors.New("could not retrieve transaction")
 	}
-	
-	if request.Amount> 0{		
+
+	if request.Amount > 0 {
 		// update the account balance if the previous amount was less than the new amount
-		if category.Type == "expense"  {
-			if (transaction.Amount != request.Amount){
-				if (transaction.Amount < request.Amount){
+		if category.Type == constants.EXPENSE {
+			if transaction.Amount != request.Amount {
+				if transaction.Amount < request.Amount {
 					if trxAccount.Balance < (request.Amount - transaction.Amount) {
 						return errors.New("insufficient funds")
 					}
-					trxAccount.Balance -= (request.Amount - transaction.Amount)
+					trxAccount.Balance -= request.Amount - transaction.Amount
 				} else {
-					trxAccount.Balance += (transaction.Amount - request.Amount)
+					trxAccount.Balance += transaction.Amount - request.Amount
 				}
 			}
-		}else if category.Type == "income" {
-			if (transaction.Amount != request.Amount){
-				if (transaction.Amount < request.Amount){
-					trxAccount.Balance += (request.Amount - transaction.Amount)
+		} else if category.Type == constants.INCOME {
+			if transaction.Amount != request.Amount {
+				if transaction.Amount < request.Amount {
+					trxAccount.Balance += request.Amount - transaction.Amount
 				} else {
-					trxAccount.Balance -= (transaction.Amount - request.Amount)
+					trxAccount.Balance -= transaction.Amount - request.Amount
 				}
 			}
 		} else {
 			return errors.New("expense type undefined")
 		}
-	   transaction.Amount = request.Amount
-		
+		transaction.Amount = request.Amount
+
 	}
 	if request.Date != "" {
 		date, dateErr := formatDate(request.Date)
@@ -204,7 +205,7 @@ func UpdateTransaction(request types.TransactionRequest, username string) error 
 		}
 		transaction.CategoryID = category.ID
 	}
-	
+
 	if request.Description != "" {
 		transaction.Description = request.Description
 	}
@@ -220,14 +221,14 @@ func FilterTransactions(request types.FilterRequest, username string) ([]models.
 	if err != nil {
 		return nil, errors.New("could not retrieve user from context")
 	}
-	
+
 	if request.AccountID > 0 {
 		account, err := repository.GetTransactionsByAccountId(request.AccountID)
 		if err != nil {
 			return nil, errors.New("could not retrieve account")
 		}
 		return account, nil
-		
+
 	}
 	if request.CategoryID > 0 {
 		category, err := repository.GetTransactionByCategoryId(request.CategoryID, user.ID)
@@ -252,8 +253,8 @@ func FilterTransactions(request types.FilterRequest, username string) ([]models.
 
 		return category, nil
 	}
-	return nil, errors.New("could not retrieve transactions")	
-	
+	return nil, errors.New("could not retrieve transactions")
+
 }
 
 func DeleteTransaction(id uint, username string) error {
@@ -268,7 +269,7 @@ func DeleteTransaction(id uint, username string) error {
 	if transaction.UserID != user.ID {
 		return errors.New("transaction does not belong to user")
 	}
-	category, err:= repository.GetCategoryByName(transaction.Category.Name)
+	category, err := repository.GetCategoryByName(transaction.Category.Name)
 	if err != nil {
 		return errors.New("could not retrieve category")
 	}
@@ -280,13 +281,18 @@ func DeleteTransaction(id uint, username string) error {
 		return errors.New("account does not belong to user")
 	}
 
-	if category.Type == "expense" {
+	if category.Type == constants.EXPENSE {
 		account.Balance += transaction.Amount
 	}
-	if category.Type == "income" {
+	if category.Type == constants.INCOME {
 		account.Balance -= transaction.Amount
 	}
-	repository.UpdateTransactionAccount(*account)
+
+	updated := repository.UpdateTransactionAccount(*account)
+	if updated != nil {
+		log.Printf("Error updating account balance after deleting transaction: %v", updated)
+		return errors.New("could not update account balance")
+	}
 
 	return repository.DeleteTransaction(id)
 }
