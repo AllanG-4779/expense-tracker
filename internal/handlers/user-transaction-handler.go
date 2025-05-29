@@ -86,26 +86,25 @@ func GetTransactions(context *gin.Context) {
 		context.JSON(400, gin.H{"message": "Error fetching transactions"})
 		return
 	}
-	
+
 }
 
 func GetUserAccounts(context *gin.Context) {
 	authCtx := context.MustGet(constants.CLAIMS).(jwt.MapClaims)
 	username := authCtx["username"].(string)
-	
-		accounts, err := service.GetUserAccounts(username)
-		if err != nil {
-			log.Println(err)
-			context.JSON(400, gin.H{"message": "Error fetching accounts"})
-			return
-		}
-		if len(accounts) == 0 {
-			context.JSON(200, gin.H{"message": "No accounts found"})
-			return
-		}
-		context.JSON(200, gin.H{"message": "Accounts fetched", "accounts": accounts})
-		
-	
+
+	accounts, err := service.GetUserAccounts(username)
+	if err != nil {
+		log.Println(err)
+		context.JSON(400, gin.H{"message": "Error fetching accounts"})
+		return
+	}
+	if len(accounts) == 0 {
+		context.JSON(200, gin.H{"message": "No accounts found"})
+		return
+	}
+	context.JSON(200, gin.H{"message": "Accounts fetched", "accounts": accounts})
+
 }
 
 func UpdateTransaction(context *gin.Context) {
@@ -116,7 +115,7 @@ func UpdateTransaction(context *gin.Context) {
 		err := service.UpdateTransaction(transaction, username)
 		if err != nil {
 			log.Println(err)
-			context.JSON(400, gin.H{"message": "Error updating transaction:"+ err.Error()})
+			context.JSON(400, gin.H{"message": "Error updating transaction:" + err.Error()})
 			return
 		}
 		context.JSON(200, gin.H{"message": "Transaction updated"})
@@ -135,6 +134,7 @@ func FilterTransactions(context *gin.Context) {
 	if context.ShouldBindJSON(&filter) == nil {
 		transactions, err := service.FilterTransactions(filter, username)
 		if err != nil {
+			log.Println(err.Error())
 			context.JSON(400, gin.H{"message": "Error filtering transactions"})
 			return
 		}
@@ -150,7 +150,7 @@ func FilterTransactions(context *gin.Context) {
 	}
 }
 
-	func DeleteTransaction(context *gin.Context) {
+func DeleteTransaction(context *gin.Context) {
 	authCtx := context.MustGet(constants.CLAIMS).(jwt.MapClaims)
 	username := authCtx["username"].(string)
 	var request types.FetchRequest
@@ -169,4 +169,3 @@ func FilterTransactions(context *gin.Context) {
 	}
 
 }
-

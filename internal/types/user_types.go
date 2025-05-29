@@ -5,7 +5,7 @@ type LoginResponse struct {
 	Token      TokenResponse `json:"body"`
 	Status     int           `json:"status"`
 	Successful bool          `json:"successful"`
-	User      User		 `json:"user"`
+	User       User          `json:"user"`
 }
 
 type UserRegistration struct {
@@ -29,10 +29,10 @@ type LoginRequest struct {
 }
 
 type TokenResponse struct {
-	Token    string `json:"token"`
-	ValidFor int    `json:"valid_for"`
-	IssuedAt int64 `json:"issued_at"`
-	ExpiresAt int64 `json:"expires_at"`
+	Token     string `json:"token"`
+	ValidFor  int    `json:"valid_for"`
+	IssuedAt  int64  `json:"issued_at"`
+	ExpiresAt int64  `json:"expires_at"`
 }
 
 type AuthContext struct {
@@ -43,17 +43,20 @@ type AuthContext struct {
 }
 
 type User struct {
-	Username string `json:"username"`
+	Username  string `json:"username"`
 	FirstName string `json:"first_name"`
-	LastName  string `json:"last_name"`	
-	Email    string `json:"email"`	
+	LastName  string `json:"last_name"`
+	Email     string `json:"email"`
 }
 
 type FilterRequest struct {
-	StartDate string `json:"start_date"`
-	EndDate   string `json:"end_date"`
-	CategoryID  uint `json:"category"`
-	UserId     uint `json:"user_id"`
-	AccountID   uint `json:"account_id"`
+	StartDate       string `json:"start_date"`
+	EndDate         string `json:"end_date"`
+	Page            int    `json:"page"`
+	Size            int    `json:"size"`
+	CategoryID      uint   `json:"category"`
+	UserId          uint   `json:"user_id"`
+	Type            string `json:"type"`
+	AccountID       uint   `json:"account_id"`
 	TransactionType string `json:"transaction_type"`
 }

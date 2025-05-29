@@ -129,9 +129,10 @@ func GetTransactionById(id uint) (*models.Transaction, error) {
 	return &transaction, nil
 }
 
-func GetTransactionsByAccountId(id uint) ([]models.Transaction, error) {
+func GetTransactionsByAccountId(id uint, userId uint) ([]models.Transaction, error) {
 	var transactions []models.Transaction
-	err := database.DB.Preload("Category").Where("account_id = ?", id).Find(&transactions).Error
+	err := database.DB.Preload("Category").Where("account_id = ? and deleted_at IS NULL  and user_id = ?", id,
+		userId).Find(&transactions).Error
 	if err != nil {
 		return nil, err
 	}
@@ -168,4 +169,12 @@ func DeleteTransaction(id uint) error {
 		return err
 	}
 	return nil
+}
+func GetTransactionByType(transactionType string, userId uint) ([]models.Transaction, error) {
+	var transactions []models.Transaction
+	err := database.DB.Preload("Category").Where("type = ? and user_id = ?", transactionType, userId).Find(&transactions).Error
+	if err != nil {
+		return nil, err
+	}
+	return transactions, nil
 }

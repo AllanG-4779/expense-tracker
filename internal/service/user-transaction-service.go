@@ -223,7 +223,7 @@ func FilterTransactions(request types.FilterRequest, username string) ([]models.
 	}
 
 	if request.AccountID > 0 {
-		account, err := repository.GetTransactionsByAccountId(request.AccountID)
+		account, err := repository.GetTransactionsByAccountId(request.AccountID, user.ID)
 		if err != nil {
 			return nil, errors.New("could not retrieve account")
 		}
@@ -253,7 +253,15 @@ func FilterTransactions(request types.FilterRequest, username string) ([]models.
 
 		return category, nil
 	}
-	return nil, errors.New("could not retrieve transactions")
+	if request.Type != "" {
+		category, err := repository.GetTransactionByType(request.Type, user.ID)
+		if err != nil {
+			return nil, errors.New("could not retrieve category")
+		}
+		return category, nil
+	}
+	return repository.GetTransactions(types.FetchRequest{Page: request.Page, Size: request.Size,
+		Username: strconv.Itoa(int(user.ID))})
 
 }
 
