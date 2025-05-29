@@ -169,3 +169,22 @@ func DeleteTransaction(context *gin.Context) {
 	}
 
 }
+
+func GetDashboardData(context *gin.Context) {
+	authCtx := context.MustGet(constants.CLAIMS).(jwt.MapClaims)
+	username := authCtx["username"].(string)
+	var request types.FilterRequest
+	if context.ShouldBindJSON(&request) == nil {
+		data, err := service.GetDashboardData(request, username)
+		if err != nil {
+			log.Println(err)
+			context.JSON(400, gin.H{"message": err.Error()})
+			return
+		}
+		context.JSON(200, gin.H{"message": "Dashboard data fetched", "data": data})
+		return
+	} else {
+		context.JSON(400, gin.H{"message": "Unable to bind payload"})
+		return
+	}
+}

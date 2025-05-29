@@ -7,5 +7,6 @@
     <file url="file://$PROJECT_DIR$/db/migrations/000002_relate_transaction_to_account.up.sql" dialect="PostgreSQL" />
     <file url="file://$PROJECT_DIR$/db/migrations/000003_make_user_id_unique_for_one_one.down.sql" dialect="PostgreSQL" />
     <file url="file://$PROJECT_DIR$/db/migrations/000003_make_user_id_unique_for_one_one.up.sql" dialect="PostgreSQL" />
+    <file url="file://$PROJECT_DIR$/internal/repository/user-transaction-repository.go" dialect="PostgreSQL" />
   </component>
 </project>

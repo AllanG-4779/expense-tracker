@@ -60,3 +60,18 @@ type FilterRequest struct {
 	AccountID       uint   `json:"account_id"`
 	TransactionType string `json:"transaction_type"`
 }
+type DashboardResponse struct {
+	TotalIncome       float64     `json:"total_income"`
+	TotalExpense      float64     `json:"total_expense"`
+	TotalBalance      float64     `json:"total_balance"`
+	TotalTransactions int         `json:"total_transactions"`
+	GraphData         []GraphData `json:"graph_data"`
+}
+
+type GraphData struct {
+	Date   string  `json:"date"`
+	Usage  float64 `json:"usage"`
+	Amount float64 `json:"amount"`
+	Type   string  `json:"type"`
+	Totals float64 `json:"totals"` // 'income' or 'expense'
+}

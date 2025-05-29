@@ -178,3 +178,19 @@ func GetTransactionByType(transactionType string, userId uint) ([]models.Transac
 	}
 	return transactions, nil
 }
+
+func GroupData(id uint, startDate string, endDate string) (types.DashboardResponse, error) {
+	query := "SELECT type, date, account_id, amount, sum(amount) over(partition by type order by type desc ) as usage from transactions where account_id = ? AND date between ? and ? and deleted_at is null"
+	var summaries []types.GraphData
+	database.DB.Raw(query, id, startDate, endDate).Scan(&summaries)
+	if len(summaries) == 0 {
+		return types.DashboardResponse{}, errors.New("no data found for the given account")
+	}
+	dashboardData := types.DashboardResponse{}
+	dashboardData.TotalIncome = summaries[0].Usage
+	dashboardData.TotalExpense = summaries[len(summaries)-1].Usage
+	dashboardData.TotalTransactions = len(summaries)
+	dashboardData.TotalBalance = dashboardData.TotalIncome - dashboardData.TotalExpense
+	dashboardData.GraphData = summaries
+	return dashboardData, nil
+}

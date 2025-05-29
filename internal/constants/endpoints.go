@@ -9,18 +9,19 @@ const (
 )
 
 const (
-	SetupEntryPoint       = ApiEntryPoint + "/setup"
-	SetupCategoryEndpoint = "/category"
+	SetupEntryPoint          = ApiEntryPoint + "/setup"
+	SetupCategoryEndpoint    = "/category"
 	SetupCategoryEndpointGET = "/category/get"
 )
 
 const (
-	ActivateAccount = "/activate"
-	AddTransaction  = "/add/transaction"
-	CreateBudget    = "/create/budget"
-	GetTransactions = "/get/transactions"
-	GetAccounts     = "/get/accounts"
+	ActivateAccount   = "/activate"
+	AddTransaction    = "/add/transaction"
+	CreateBudget      = "/create/budget"
+	GetTransactions   = "/get/transactions"
+	GetAccounts       = "/get/accounts"
 	UpdateTransaction = "/update/transaction"
 	FilterTransaction = "/filter/transaction"
 	DeleteTransaction = "/delete/transaction"
+	DashboardData     = "/dashboard"
 )

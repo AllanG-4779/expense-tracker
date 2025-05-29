@@ -304,3 +304,53 @@ func DeleteTransaction(id uint, username string) error {
 
 	return repository.DeleteTransaction(id)
 }
+
+func GetDashboardData(request types.FilterRequest, username string) (types.DashboardResponse, error) {
+	user, err := repository.GetUser(username, "username")
+	if err != nil {
+		return types.DashboardResponse{}, errors.New("could not retrieve user from context")
+	}
+
+	account, err := repository.GetTransactionAccounts(types.AccountRequest{UserId: user.ID, Page: 0, Size: 10})
+	if err != nil {
+		log.Printf(err.Error())
+		return types.DashboardResponse{}, errors.New("could not retrieve accounts")
+	}
+	if len(account) == 0 {
+		return types.DashboardResponse{}, errors.New("user account does not exist")
+	}
+
+	if accountExists(request.AccountID, account) == false && request.AccountID > 0 {
+		return types.DashboardResponse{}, errors.New("account does not belong to user")
+	}
+	if request.StartDate != "" && request.EndDate != "" {
+		startDate, err := formatDate(request.StartDate)
+		if err != nil {
+			return types.DashboardResponse{}, errors.New("could not format start date")
+		}
+		endDate, err := formatDate(request.EndDate)
+		if err != nil {
+			return types.DashboardResponse{}, errors.New("could not format end date")
+		}
+		request.StartDate = startDate
+		request.EndDate = endDate
+	}
+
+	accounts, err := repository.GroupData(request.AccountID, request.StartDate, request.EndDate)
+	if err != nil {
+		return types.DashboardResponse{}, errors.New("could not retrieve transactions: " + err.Error())
+	}
+	return accounts, nil
+
+}
+
+func accountExists(id uint, accounts []models.Account) bool {
+	log.Printf("Comparing account ID %d with existing accounts %v", id, accounts)
+	for _, account := range accounts {
+		if account.ID == id {
+			return true
+		}
+	}
+	return false
+
+}
