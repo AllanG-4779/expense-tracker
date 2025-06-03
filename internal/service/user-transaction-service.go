@@ -198,12 +198,25 @@ func UpdateTransaction(request types.TransactionRequest, username string) error 
 		}
 		transaction.Date = date
 	}
-	if request.CategoryId != 0 {
+	if request.CategoryID != transaction.Category.Name {
 		category, categoryErr := repository.GetCategoryByName(request.CategoryID)
 		if categoryErr != nil {
 			return errors.New("could not retrieve category")
 		}
 		transaction.CategoryID = category.ID
+		if (category.Type == constants.EXPENSE && transaction.Type == constants.INCOME) ||
+			(category.Type == constants.INCOME && transaction.Type == constants.EXPENSE) {
+			// If the category type has changed, we need to update the account balance accordingly
+			if category.Type == constants.EXPENSE {
+				if trxAccount.Balance < transaction.Amount {
+					return errors.New("insufficient funds")
+				}
+				trxAccount.Balance -= transaction.Amount
+			}
+			if category.Type == constants.INCOME {
+				trxAccount.Balance += transaction.Amount
+			}
+		}
 	}
 
 	if request.Description != "" {
@@ -212,7 +225,10 @@ func UpdateTransaction(request types.TransactionRequest, username string) error 
 	if request.Title != "" {
 		transaction.Title = request.Title
 	}
-	repository.UpdateTransactionAccount(*trxAccount)
+	updateErr := repository.UpdateTransactionAccount(*trxAccount)
+	if updateErr != nil {
+		return updateErr
+	}
 	return repository.UpdateTransaction(*transaction)
 }
 
