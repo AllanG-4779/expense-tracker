@@ -155,7 +155,7 @@ func GetTransactionByDate(start string, end string, userId uint) ([]models.Trans
 	return transactions, nil
 }
 
-func UpdateTransaction(request models.Transaction) error {
+func UpdateTransaction(request *models.Transaction) error {
 	err := database.DB.Updates(&request).Error
 	if err != nil {
 		return err
@@ -193,4 +193,34 @@ func GroupData(id uint, startDate string, endDate string) (types.DashboardRespon
 	dashboardData.TotalBalance = dashboardData.TotalIncome - dashboardData.TotalExpense
 	dashboardData.GraphData = summaries
 	return dashboardData, nil
+}
+
+func FilterTransactions(filter types.FilterRequest, userId uint) ([]models.Transaction, error) {
+	var transactions []models.Transaction
+	query := database.DB.Preload("Category").Where("user_id = ?", userId)
+
+	if filter.StartDate != "" && filter.EndDate != "" {
+		query = query.Where("date BETWEEN ? AND ?", filter.StartDate, filter.EndDate)
+	}
+
+	if filter.CategoryID != 0 {
+		query = query.Where("category_id = ?", filter.CategoryID)
+	}
+
+	if filter.Type != "" {
+		query = query.Where("type = ?", filter.Type)
+	}
+
+	if filter.AccountID != 0 {
+		query = query.Where("account_id = ?", filter.AccountID)
+	}
+	if filter.MinAmount > 0 && filter.MaxAmount > 0 {
+		query = query.Where("amount BETWEEN ? AND ?", filter.MinAmount, filter.MaxAmount)
+	}
+
+	err := query.Find(&transactions).Error
+	if err != nil {
+		return nil, err
+	}
+	return transactions, nil
 }

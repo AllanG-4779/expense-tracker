@@ -203,20 +203,19 @@ func UpdateTransaction(request types.TransactionRequest, username string) error 
 		if categoryErr != nil {
 			return errors.New("could not retrieve category")
 		}
-		transaction.CategoryID = category.ID
-		if (category.Type == constants.EXPENSE && transaction.Type == constants.INCOME) ||
-			(category.Type == constants.INCOME && transaction.Type == constants.EXPENSE) {
-			// If the category type has changed, we need to update the account balance accordingly
-			if category.Type == constants.EXPENSE {
-				if trxAccount.Balance < transaction.Amount {
-					return errors.New("insufficient funds")
-				}
-				trxAccount.Balance -= transaction.Amount
+
+		if category.Type == constants.EXPENSE && transaction.Type == constants.INCOME {
+			// If the category type is changed from income to expense, we need to update the balance
+			if trxAccount.Balance < transaction.Amount {
+				return errors.New("insufficient funds")
 			}
-			if category.Type == constants.INCOME {
-				trxAccount.Balance += transaction.Amount
-			}
+			trxAccount.Balance -= transaction.Amount
+		} else if category.Type == constants.INCOME && transaction.Type == constants.EXPENSE {
+			// If the category type is changed from expense to income, we need to update the balance
+			trxAccount.Balance += transaction.Amount
 		}
+		transaction.CategoryID = category.ID
+		transaction.Category = *category
 	}
 
 	if request.Description != "" {
@@ -229,7 +228,7 @@ func UpdateTransaction(request types.TransactionRequest, username string) error 
 	if updateErr != nil {
 		return updateErr
 	}
-	return repository.UpdateTransaction(*transaction)
+	return repository.UpdateTransaction(transaction)
 }
 
 func FilterTransactions(request types.FilterRequest, username string) ([]models.Transaction, error) {
@@ -237,47 +236,7 @@ func FilterTransactions(request types.FilterRequest, username string) ([]models.
 	if err != nil {
 		return nil, errors.New("could not retrieve user from context")
 	}
-
-	if request.AccountID > 0 {
-		account, err := repository.GetTransactionsByAccountId(request.AccountID, user.ID)
-		if err != nil {
-			return nil, errors.New("could not retrieve account")
-		}
-		return account, nil
-
-	}
-	if request.CategoryID > 0 {
-		category, err := repository.GetTransactionByCategoryId(request.CategoryID, user.ID)
-		if err != nil {
-			return nil, errors.New("could not retrieve category")
-		}
-		return category, nil
-	}
-	if request.StartDate != "" && request.EndDate != "" {
-		startDate, err := formatDate(request.StartDate)
-		if err != nil {
-			return nil, errors.New("could not format start date")
-		}
-		endDate, err := formatDate(request.EndDate)
-		if err != nil {
-			return nil, errors.New("could not format end date")
-		}
-		category, err := repository.GetTransactionByDate(startDate, endDate, user.ID)
-		if err != nil {
-			return nil, errors.New("could not retrieve category")
-		}
-
-		return category, nil
-	}
-	if request.Type != "" {
-		category, err := repository.GetTransactionByType(request.Type, user.ID)
-		if err != nil {
-			return nil, errors.New("could not retrieve category")
-		}
-		return category, nil
-	}
-	return repository.GetTransactions(types.FetchRequest{Page: request.Page, Size: request.Size,
-		Username: strconv.Itoa(int(user.ID))})
+	return repository.FilterTransactions(request, user.ID)
 
 }
 

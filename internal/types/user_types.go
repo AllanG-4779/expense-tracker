@@ -59,6 +59,8 @@ type FilterRequest struct {
 	Type            string `json:"type"`
 	AccountID       uint   `json:"account_id"`
 	TransactionType string `json:"transaction_type"`
+	MinAmount       int    `json:"min_amount"`
+	MaxAmount       int    `json:"max_amount"`
 }
 type DashboardResponse struct {
 	TotalIncome       float64     `json:"total_income"`
