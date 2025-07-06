@@ -9,27 +9,39 @@ type CategoryRequest struct {
 	Size        int    `json:"size"`
 }
 type AccountRequest struct {
-	Name    string  `json:"name"`
-	Balance float32 `json:"balance"`
-	UserId  uint    `json:"user_id"`
-	AccountID uint   `json:"account_id"`
-	Page    int     `json:"page"`
-	Size    int     `json:"size"`
+	Name      string  `json:"name"`
+	Balance   float32 `json:"balance"`
+	UserId    uint    `json:"user_id"`
+	AccountID uint    `json:"account_id"`
+	Page      int     `json:"page"`
+	Size      int     `json:"size"`
 }
 type TransactionRequest struct {
-	Amount      float64 `json:"amount"`
-	Description string  `json:"description"`
-	Date        string  `json:"date"`
-	Title       string  `json:"title"`
-	Type        string  `json:"type"`
-	CategoryID  string  `json:"category"`
-	AccountID   uint    `json:"account_id"`
-	CategoryId uint    `json:"category_id"`
-	TransactionID uint   `json:"transaction_id"`
-	UserId      uint    `json:"user_id"`
-	Page        int     `json:"page"`
-	Size        int     `json:"size"`
+	Amount        float64 `json:"amount"`
+	Description   string  `json:"description"`
+	Date          string  `json:"date"`
+	Title         string  `json:"title"`
+	Type          string  `json:"type"`
+	CategoryID    string  `json:"category"`
+	AccountID     uint    `json:"account_id"`
+	CategoryId    uint    `json:"category_id"`
+	TransactionID uint    `json:"transaction_id"`
+	UserId        uint    `json:"user_id"`
+	Page          int     `json:"page"`
+	Size          int     `json:"size"`
 }
+
+/*
+*
+
+	name: "Transport",
+	       allocation: 6000,
+	       expenditure: 4000,
+	       start: "2025-05-01",
+	       color: "bg-red-400",
+	       end: "2025-05-31",
+	       category: "RENT",
+*/
 type BudgetRequest struct {
 	Amount       float64 `json:"amount"`
 	Balance      float64 `json:"balance"`
@@ -40,7 +52,10 @@ type BudgetRequest struct {
 }
 type FetchRequest struct {
 	Page     int    `json:"page"`
-	ID	   int   `json:"id"`
+	ID       int    `json:"id"`
 	Username string `json:"username"`
 	Size     int    `json:"size"`
+	Start    string `json:"start_date"`
+	End      string `json:"end_date"`
+	UserID   uint   `json:"user_id"`
 }

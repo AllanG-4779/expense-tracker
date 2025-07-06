@@ -188,3 +188,18 @@ func GetDashboardData(context *gin.Context) {
 		return
 	}
 }
+
+func GetBudgets(context *gin.Context) {
+	authCtx := context.MustGet(constants.CLAIMS).(jwt.MapClaims)
+	username := authCtx["username"].(string)
+	request := types.FetchRequest{}
+	if context.ShouldBindJSON(&request) == nil {
+		returned, err := service.GetBudgets(request, username)
+		if err != nil {
+			log.Println(err)
+			context.JSON(400, gin.H{"message": "Error fetching budgets"})
+			return
+		}
+		context.JSON(200, gin.H{"message": "Budgets fetched", "budgets": returned})
+	}
+}

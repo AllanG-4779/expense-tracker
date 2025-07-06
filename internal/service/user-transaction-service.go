@@ -329,3 +329,16 @@ func accountExists(id uint, accounts []models.Account) bool {
 	return false
 
 }
+func GetBudgets(request types.FetchRequest, username string) ([]models.Budget, error) {
+	user, err := repository.GetUser(username, "username")
+	if err != nil {
+		return nil, errors.New("could not retrieve user from context")
+	}
+	request.Username = strconv.Itoa(int(user.ID))
+	request.UserID = user.ID
+	budgets, err := repository.GetUserBudgets(request)
+	if err != nil {
+		return nil, errors.New("could not retrieve budgets")
+	}
+	return budgets, nil
+}

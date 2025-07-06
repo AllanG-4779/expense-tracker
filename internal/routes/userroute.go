@@ -24,5 +24,6 @@ func UserRoutesSetup(engine *gin.Engine) {
 	authenticated.POST(constants.FilterTransaction, handlers.FilterTransactions)
 	authenticated.DELETE(constants.DeleteTransaction, handlers.DeleteTransaction)
 	authenticated.POST(constants.DashboardData, handlers.GetDashboardData)
+	authenticated.POST(constants.GetBudgets, handlers.GetBudgets)
 
 }

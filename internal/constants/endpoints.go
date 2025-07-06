@@ -24,4 +24,5 @@ const (
 	FilterTransaction = "/filter/transaction"
 	DeleteTransaction = "/delete/transaction"
 	DashboardData     = "/dashboard"
+	GetBudgets        = "/get/budgets"
 )

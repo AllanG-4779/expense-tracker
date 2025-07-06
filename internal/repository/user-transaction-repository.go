@@ -2,6 +2,7 @@ package repository
 
 import (
 	"errors"
+	"log"
 	"strconv"
 	"strings"
 
@@ -214,13 +215,37 @@ func FilterTransactions(filter types.FilterRequest, userId uint) ([]models.Trans
 	if filter.AccountID != 0 {
 		query = query.Where("account_id = ?", filter.AccountID)
 	}
-	if filter.MinAmount > 0 && filter.MaxAmount > 0 {
+	if filter.MaxAmount > 0 {
 		query = query.Where("amount BETWEEN ? AND ?", filter.MinAmount, filter.MaxAmount)
 	}
+	log.Println("Filtering transactions with query: ", query.Statement.SQL.String())
 
 	err := query.Find(&transactions).Error
 	if err != nil {
 		return nil, err
 	}
 	return transactions, nil
+}
+
+func GetUserBudgets(request types.FetchRequest) ([]models.Budget, error) {
+	var budgets []models.Budget
+	size := request.Size
+	offset := request.Size * (request.Page)
+	var filter string
+	var err error
+
+	if request.Start != "" && request.End != "" {
+		filter = "start_date BETWEEN ? AND ? AND user_id = ? AND deleted_at IS NULL"
+	} else {
+		// If no date filter is provided, fetch all budgets for the user
+		filter = "user_id = ? AND deleted_at IS NULL"
+	}
+
+	err = database.DB.Preload("Category").Limit(size).Offset(offset).Where(filter, request.Start, request.End, request.UserID).Find(&budgets).Error
+
+	if err != nil {
+		log.Println("Error fetching budgets:", err)
+		return nil, err
+	}
+	return budgets, nil
 }
