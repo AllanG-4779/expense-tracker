@@ -204,6 +204,6 @@ func GetBudgets(context *gin.Context) {
 			context.JSON(400, gin.H{"message": "Error fetching budgets"})
 			return
 		}
-		context.JSON(200, gin.H{"message": "Budgets fetched", "budgets": response})
+		context.JSON(200, response)
 	}
 }
