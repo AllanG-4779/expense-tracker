@@ -77,3 +77,8 @@ type GraphData struct {
 	Type   string  `json:"type"`
 	Totals float64 `json:"totals"` // 'income' or 'expense'
 }
+type UniversalResponse struct {
+	Message string `json:"message"`
+	Status  int    `json:"status"`
+	Body    any    `json:"body"`
+}

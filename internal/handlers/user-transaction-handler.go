@@ -195,11 +195,15 @@ func GetBudgets(context *gin.Context) {
 	request := types.FetchRequest{}
 	if context.ShouldBindJSON(&request) == nil {
 		returned, err := service.GetBudgets(request, username)
+		response := types.UniversalResponse{}
+		response.Body = returned
+		response.Status = 200
+		response.Message = "Budgets fetched successfully"
 		if err != nil {
 			log.Println(err)
 			context.JSON(400, gin.H{"message": "Error fetching budgets"})
 			return
 		}
-		context.JSON(200, gin.H{"message": "Budgets fetched", "budgets": returned})
+		context.JSON(200, gin.H{"message": "Budgets fetched", "budgets": response})
 	}
 }
